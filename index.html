@@ -1,1 +1,64 @@
 
+selectedCategory === "Todos" || game.category === selectedCategory;
+    const text = (
+      game.name + " " + game.category + " " +
+      game.platform + " " + game.description
+    ).toLocaleLowerCase("pt-BR");
+
+    return matchesCategory && text.includes(query);
+  });
+
+  count.textContent = filtered.length + " itens";
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty">Nenhum resultado encontrado.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(game => `
+    <article class="game">
+      <div class="cover">
+        ${game.image
+          ? `<img src="${game.image}" alt="Capa de ${game.name}" loading="lazy">`
+          : `<div class="placeholder">
+               <div><span>${game.emoji}</span>
+               <strong>${game.name}</strong></div>
+             </div>`
+        }
+        <span class="cover-tag">${game.category}</span>
+      </div>
+      <div class="info">
+        <h3>${game.name}</h3>
+        <div class="meta">${game.platform}</div>
+        <div class="meta">${game.description}</div>
+        <a class="card-btn"
+           href="${game.url || '#'}"
+           ${game.url ? 'target="_blank" rel="noopener noreferrer"' : ''}
+           ${game.url ? '' : 'onclick="event.preventDefault(); alert(\'Página deste conteúdo ainda não disponível.\')"'}
+        >${game.url ? 'Visitar site oficial ↗' : 'Em breve'}</a>
+      </div>
+    </article>
+  `).join("");
+}
+
+document.getElementById("categories").addEventListener("click", event => {
+  const button = event.target.closest("button[data-category]");
+  if (!button) return;
+
+  selectedCategory = button.dataset.category;
+
+  document.querySelectorAll("#categories button").forEach(item => {
+    item.classList.toggle("active", item === button);
+  });
+
+  render();
+});
+
+search.addEventListener("input", render);
+document.getElementById("year").textContent = new Date().getFullYear();
+
+render();
+</script>
+</body>
+</html>
+
