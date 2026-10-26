@@ -15,7 +15,6 @@
       --border: #292929;
       --text: #f5f5f5;
       --muted: #999999;
-      --accent: #bdbdbd;
     }
 
     * {
@@ -192,6 +191,9 @@
       border-radius: 7px;
       font-size: 13px;
       font-weight: bold;
+      border: none;
+      width: 100%;
+      cursor: pointer;
     }
 
     .card-link:hover {
@@ -249,7 +251,6 @@
 </head>
 
 <body>
-
   <header>
     <div class="logo">NETHERFILES</div>
     <p class="subtitle">Sua biblioteca de games</p>
@@ -260,7 +261,7 @@
       type="search"
       id="search"
       class="search"
-      placeholder="🔎 Pesquisar jogos, emuladores e ferramentas..."
+      placeholder="🔎 Pesquisar jogos, apps e ferramentas..."
       aria-label="Pesquisar biblioteca"
     >
 
@@ -269,12 +270,12 @@
       <button class="filter" data-category="Jogos">Jogos</button>
       <button class="filter" data-category="Emuladores">Emuladores</button>
       <button class="filter" data-category="Ferramentas">Ferramentas</button>
+      <button class="filter" data-category="Apps">Apps</button>
       <button class="filter" data-category="Mods">Mods</button>
       <button class="filter" data-category="Ports">Ports</button>
     </div>
 
     <h2 class="section-title">Biblioteca</h2>
-
     <section id="grid" class="grid"></section>
   </main>
 
@@ -285,6 +286,15 @@
 
   <script>
     const games = [
+      {
+        name: "Fuzz TV",
+        category: "Apps",
+        platform: "Android",
+        description: "Um app de streaming completo para assistir a conteúdos de entretenimento.",
+        emoji: "📺",
+        image: "fuzztv.png",
+        url: ""
+      },
       {
         name: "Max Payne",
         category: "Jogos",
@@ -472,6 +482,5 @@
 
     render();
   </script>
-
 </body>
 </html>
