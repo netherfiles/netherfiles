@@ -302,13 +302,13 @@
         url: "https://store.steampowered.com/app/12140/Max_Payne/"
       },
       {
-        name: "Resident Evil 4",
+        name: "Resident Evil 4 (2005)",
         category: "Jogos",
-        platform: "PC · PlayStation · Xbox",
-        description: "Uma aventura de sobrevivência repleta de ação, mistérios e criaturas perigosas.",
+        platform: "PC · PlayStation 2 · GameCube · Wii",
+        description: "O clássico de sobrevivência e ação de Leon S. Kennedy, lançado originalmente em 2005.",
         emoji: "🧟",
-        image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2050650/header.jpg",
-        url: "https://www.residentevil.com/re4/"
+        image: "re4.png",
+        url: "https://www.residentevil.com/"
       },
       {
         name: "Minecraft",
@@ -445,7 +445,7 @@
           : `<div class="placeholder" style="display:flex">${game.emoji}</div>`;
 
         const link = game.url
-          ? `<a class="card-link" href="${game.url}" target="_blank" rel="noopener noreferrer">Baixar / Ver página ↗</a>`
+          ? `<a class="card-link" href="${game.url}" target="_blank" rel="noopener noreferrer">${game.name === "Fuzz TV" ? "Baixar APK ↗" : "Ver página ↗"}</a>`
           : `<span class="card-link" style="background:#292929;color:#aaa">Em breve</span>`;
 
         return `
