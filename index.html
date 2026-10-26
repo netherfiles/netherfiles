@@ -2,305 +2,476 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080808">
-<title>NetherFiles — Games, Ports e Emuladores</title>
-<meta name="description" content="Descubra jogos, ports, mods e emuladores no NetherFiles.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>NetherFiles — Sua biblioteca de games</title>
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#080808;color:#f5f5f5;font-family:Arial,Helvetica,sans-serif}
-a{color:inherit;text-decoration:none}
-header{border-bottom:1px solid #252525;padding:20px 5%}
-nav{max-width:1250px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.logo{font-size:25px;font-weight:900;letter-spacing:-1px}
-.logo span{color:#858585}
-.nav-label{font-size:11px;color:#999;border:1px solid #303030;padding:8px 11px;border-radius:30px}
-.hero{max-width:1250px;margin:auto;padding:65px 5% 35px}
-.tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#999}
-h1{font-size:clamp(38px,8vw,72px);letter-spacing:-3px;line-height:1.03;margin:18px 0}
-h1 span{color:#777}
-.hero p{color:#999;max-width:560px;line-height:1.7;font-size:14px}
-.search-area{max-width:1250px;margin:auto;padding:0 5% 35px}
-.search{width:100%;padding:17px;background:#111;border:1px solid #303030;border-radius:10px;color:white;font-size:15px;outline:none}
-.search:focus{border-color:#777}
-.filters{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
-.filter{padding:10px 15px;background:#111;border:1px solid #292929;border-radius:30px;color:#aaa;font-size:12px;cursor:pointer}
-.filter.active,.filter:hover{background:#eee;color:#111;border-color:#eee}
-.section{max-width:1250px;margin:auto;padding:12px 5% 60px}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:23px}
-.section-head h2{font-size:23px}
-#count{font-size:12px;color:#888}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.card{background:#101010;border:1px solid #252525;border-radius:12px;overflow:hidden;transition:transform .2s,border-color .2s}
-.card:hover{transform:translateY(-4px);border-color:#606060}
-.cover{height:220px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#292929,#101010)}
-.cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
-.card:hover .cover img{transform:scale(1.04)}
-.placeholder{text-align:center;padding:12px}
-.emoji{display:block;font-size:45px;margin-bottom:10px}
-.placeholder strong{font-size:17px}
-.cover-tag{position:absolute;top:12px;left:12px;background:#080808dc;border:1px solid #444;padding:6px 10px;border-radius:30px;font-size:10px;color:#eee}
-.info{padding:17px}
-.info h3{font-size:18px;margin-bottom:9px}
-.platform{font-size:11px;color:#aaa;margin-bottom:12px}
-.description{font-size:13px;color:#888;line-height:1.6;min-height:42px}
-.card-btn{display:block;text-align:center;margin-top:17px;padding:12px;border:1px solid #383838;border-radius:8px;font-size:12px;font-weight:bold}
-.card-btn:hover{background:#eee;color:#111}
-.empty{grid-column:1/-1;text-align:center;color:#888;padding:45px 10px}
-.notice{max-width:1250px;margin:0 auto 55px;padding:0 5%}
-.notice-inner{padding:22px;background:#101010;border:1px solid #292929;border-radius:12px;color:#999;font-size:13px;line-height:1.7}
-.notice strong{color:#eee}
-footer{border-top:1px solid #252525;padding:25px 5%;color:#777;font-size:12px}
-.footer-inner{max-width:1250px;margin:auto;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.cover{height:190px}}
-@media(max-width:520px){header{padding:18px 4%}.logo{font-size:22px}.nav-label{font-size:9px;padding:7px}.hero{padding:48px 5% 30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cover{height:145px}.info{padding:12px}.info h3{font-size:14px}.platform{font-size:10px}.description{font-size:11px;min-height:55px}.card-btn{font-size:10px;padding:10px}.placeholder strong{font-size:13px}.emoji{font-size:32px}.cover-tag{font-size:9px;top:7px;left:7px;padding:5px 7px}.section-head h2{font-size:20px}}
-</style>
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #111111;
+      --panel-hover: #191919;
+      --border: #292929;
+      --text: #f5f5f5;
+      --muted: #999999;
+      --accent: #bdbdbd;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 32px 20px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: #0b0b0b;
+    }
+
+    .logo {
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 900;
+      letter-spacing: 5px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 9px;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px 16px 50px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 15px 17px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      margin-bottom: 18px;
+    }
+
+    .search:focus {
+      border-color: #666;
+    }
+
+    .filters {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: #ccc;
+      padding: 9px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .filter:hover,
+    .filter.active {
+      background: #eeeeee;
+      color: #111;
+      border-color: #eeeeee;
+    }
+
+    .section-title {
+      font-size: 21px;
+      margin-bottom: 17px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+      min-width: 0;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #666;
+      background: var(--panel-hover);
+    }
+
+    .cover {
+      height: 155px;
+      background: #1b1b1b;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .placeholder {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      font-size: 55px;
+      background: linear-gradient(135deg, #252525, #101010);
+    }
+
+    .card-content {
+      padding: 15px;
+    }
+
+    .category {
+      display: inline-block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ddd;
+      background: #252525;
+      border: 1px solid #383838;
+      padding: 5px 8px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    .platform {
+      color: #aaa;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 58px;
+    }
+
+    .card-link {
+      display: block;
+      margin-top: 15px;
+      padding: 11px;
+      text-align: center;
+      background: #eeeeee;
+      color: #111;
+      text-decoration: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .card-link:hover {
+      background: #ccc;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      text-align: center;
+      padding: 40px 10px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 15px;
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .cover {
+        height: 125px;
+      }
+
+      .card-content {
+        padding: 12px;
+      }
+
+      .card h3 {
+        font-size: 15px;
+      }
+
+      .description {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cover {
+        height: 175px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<header>
-<nav>
-<a class="logo" href="#">NETHER<span>FILES</span></a>
-<span class="nav-label">GAMES · PORTS · EMULADORES</span>
-</nav>
-</header>
 
-<main>
-<section class="hero">
-<div class="tag">Sua biblioteca de games</div>
-<h1>Explore.<br>Encontre.<br><span>Jogue.</span></h1>
-<p>Jogos, ports, mods e emuladores em um só lugar. Explore a biblioteca, pesquise seu próximo jogo e encontre os sites dos desenvolvedores.</p>
-</section>
+  <header>
+    <div class="logo">NETHERFILES</div>
+    <p class="subtitle">Sua biblioteca de games</p>
+  </header>
 
-<section class="search-area">
-<input class="search" id="search" type="search" placeholder="Pesquisar jogos, ports, mods..." aria-label="Pesquisar conteúdo">
-<div class="filters" id="categories">
-<button class="filter active" data-category="Todos">Todos</button>
-<button class="filter" data-category="Jogos">Jogos</button>
-<button class="filter" data-category="Emuladores">Emuladores</button>
-<button class="filter" data-category="Ports">Ports</button>
-<button class="filter" data-category="Ferramentas">Ferramentas</button>
-</div>
-</section>
+  <main>
+    <input
+      type="search"
+      id="search"
+      class="search"
+      placeholder="🔎 Pesquisar jogos, emuladores e ferramentas..."
+      aria-label="Pesquisar biblioteca"
+    >
 
-<section class="section">
-<div class="section-head">
-<h2>Biblioteca</h2>
-<span id="count">0 itens</span>
-</div>
-<div class="grid" id="grid"></div>
-</section>
+    <div class="filters">
+      <button class="filter active" data-category="Todos">Todos</button>
+      <button class="filter" data-category="Jogos">Jogos</button>
+      <button class="filter" data-category="Emuladores">Emuladores</button>
+      <button class="filter" data-category="Ferramentas">Ferramentas</button>
+      <button class="filter" data-category="Mods">Mods</button>
+      <button class="filter" data-category="Ports">Ports</button>
+    </div>
 
-<section class="notice">
-<div class="notice-inner">
-<strong>Sobre o NetherFiles</strong><br>
-Um catálogo independente de jogos e ferramentas. Os links levam a páginas dos projetos e desenvolvedores. Confira sempre a compatibilidade e os requisitos antes de instalar.
-</div>
-</section>
-</main>
+    <h2 class="section-title">Biblioteca</h2>
 
-<footer>
-<div class="footer-inner">
-<span>© <span id="year"></span> NetherFiles</span>
-<span>Feito para quem ama games.</span>
-</div>
-</footer>
+    <section id="grid" class="grid"></section>
+  </main>
 
-<script>
-const games = [
-{
-name:"Resident Evil 4",
-category:"Jogos",
-platform:"PC · PlayStation · Xbox · Switch",
-description:"Aventura e sobrevivência em uma das franquias mais conhecidas dos games.",
-emoji:"🧟",
-image:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2050650/header.jpg",
-url:"https://www.residentevil.com/re4/"
-},
-{
-name:"Minecraft",
-category:"Jogos",
-platform:"PC · Console · Mobile",
-description:"Explore mundos, construa estruturas e viva aventuras.",
-emoji:"⛏️",
-image:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1672970/header.jpg",
-url:"https://www.minecraft.net/"
-},
-{
-name:"Stardew Valley",
-category:"Jogos",
-platform:"PC · Console · Mobile",
-description:"Cuide de uma fazenda e construa sua própria história.",
-emoji:"🌱",
-image:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg",
-url:"https://www.stardewvalley.net/"
-},
-{
-name:"PPSSPP",
-category:"Emuladores",
-platform:"Android · PC",
-description:"Emulador de PSP com versões para diversas plataformas.",
-emoji:"🎮",
-image:"",
-url:"https://www.ppsspp.org/"
-},
-{
-name:"Dolphin Emulator",
-category:"Emuladores",
-platform:"Android · PC",
-description:"Emulador de Nintendo GameCube e Wii.",
-emoji:"🐬",
-image:"",
-url:"https://dolphin-emu.org/"
-},
-{
-name:"RetroArch",
-category:"Emuladores",
-platform:"Android · PC",
-description:"Plataforma que reúne vários núcleos de emulação.",
-emoji:"🕹️",
-image:"",
-url:"https://www.retroarch.com/"
-},
-{
-name:"PCSX2",
-category:"Emuladores",
-platform:"Windows · Linux · macOS",
-description:"Emulador de PlayStation 2 para computadores.",
-emoji:"🎮",
-image:"",
-url:"https://pcsx2.net/"
-},
-{
-name:"Winlator",
-category:"Ferramentas",
-platform:"Android",
-description:"Projeto para executar aplicações Windows compatíveis no Android.",
-emoji:"🖥️",
-image:"",
-url:"https://github.com/brunodev85/winlator"
-},
-{
-name:"Godot Engine",
-category:"Ferramentas",
-platform:"Windows · Linux · macOS",
-description:"Motor gratuito e de código aberto para desenvolvimento de jogos.",
-emoji:"🛠️",
-image:"",
-url:"https://godotengine.org/"
-},
-{
-name:"Blender",
-category:"Ferramentas",
-platform:"PC",
-description:"Criação 3D, animação e modelagem.",
-emoji:"🎨",
-image:"",
-url:"https://www.blender.org/"
-},
-{
-name:"NetherFiles Ports",
-category:"Ports",
-platform:"Android · Outras plataformas",
-description:"Área para reunir informações sobre ports e projetos compatíveis.",
-emoji:"📱",
-image:"",
-url:""
-},
-{
-name:"NetherFiles Mods",
-category:"Ferramentas",
-platform:"PC · Android · Jogos compatíveis",
-description:"Área para descobrir mods e personalizações de jogos.",
-emoji:"⚙️",
-image:"",
-url:""
-}
-];
+  <footer>
+    <p>NetherFiles © 2026</p>
+    <p style="margin-top:7px;">Sua biblioteca de games, em um só lugar.</p>
+  </footer>
 
-let selectedCategory = "Todos";
-const search = document.getElementById("search");
-const grid = document.getElementById("grid");
-const count = document.getElementById("count");
+  <script>
+    const games = [
+      {
+        name: "Max Payne",
+        category: "Jogos",
+        platform: "PC · PlayStation 2 · Xbox",
+        description: "Um clássico de ação noir, com tiroteios em câmera lenta e uma história sombria.",
+        emoji: "🔫",
+        image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/header.jpg",
+        url: "https://store.steampowered.com/app/12140/Max_Payne/"
+      },
+      {
+        name: "Resident Evil 4",
+        category: "Jogos",
+        platform: "PC · PlayStation · Xbox",
+        description: "Uma aventura de sobrevivência repleta de ação, mistérios e criaturas perigosas.",
+        emoji: "🧟",
+        image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2050650/header.jpg",
+        url: "https://www.residentevil.com/re4/"
+      },
+      {
+        name: "Minecraft",
+        category: "Jogos",
+        platform: "PC · Console · Mobile",
+        description: "Explore mundos, construa estruturas e sobreviva à sua própria aventura.",
+        emoji: "⛏️",
+        image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1672970/header.jpg",
+        url: "https://www.minecraft.net/"
+      },
+      {
+        name: "Stardew Valley",
+        category: "Jogos",
+        platform: "PC · Console · Mobile",
+        description: "Construa sua fazenda, conheça os moradores e descubra os segredos do vale.",
+        emoji: "🌱",
+        image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg",
+        url: "https://www.stardewvalley.net/"
+      },
+      {
+        name: "PPSSPP",
+        category: "Emuladores",
+        platform: "Android · PC",
+        description: "Emulador de PSP para jogar seus jogos compatíveis em diferentes dispositivos.",
+        emoji: "🎮",
+        image: "",
+        url: "https://www.ppsspp.org/"
+      },
+      {
+        name: "Dolphin Emulator",
+        category: "Emuladores",
+        platform: "Android · PC",
+        description: "Emulador de Nintendo GameCube e Wii.",
+        emoji: "🐬",
+        image: "",
+        url: "https://dolphin-emu.org/"
+      },
+      {
+        name: "RetroArch",
+        category: "Emuladores",
+        platform: "Android · PC · Console",
+        description: "Uma plataforma que reúne vários núcleos de emulação em um só lugar.",
+        emoji: "🕹️",
+        image: "",
+        url: "https://www.retroarch.com/"
+      },
+      {
+        name: "PCSX2",
+        category: "Emuladores",
+        platform: "PC",
+        description: "Emulador de PlayStation 2 para computadores compatíveis.",
+        emoji: "🎮",
+        image: "",
+        url: "https://pcsx2.net/"
+      },
+      {
+        name: "Winlator",
+        category: "Ferramentas",
+        platform: "Android",
+        description: "Ferramenta para executar determinados aplicativos e jogos de Windows no Android.",
+        emoji: "📱",
+        image: "",
+        url: "https://github.com/brunodev85/winlator"
+      },
+      {
+        name: "Godot Engine",
+        category: "Ferramentas",
+        platform: "PC",
+        description: "Crie seus próprios jogos com este motor de desenvolvimento gratuito e de código aberto.",
+        emoji: "🛠️",
+        image: "",
+        url: "https://godotengine.org/"
+      },
+      {
+        name: "Blender",
+        category: "Ferramentas",
+        platform: "PC",
+        description: "Software de criação 3D para modelagem, animação e muito mais.",
+        emoji: "🎨",
+        image: "",
+        url: "https://www.blender.org/"
+      },
+      {
+        name: "NetherFiles Ports",
+        category: "Ports",
+        platform: "Várias plataformas",
+        description: "Área para reunir ports e projetos de jogos adaptados para outras plataformas.",
+        emoji: "📦",
+        image: "",
+        url: ""
+      },
+      {
+        name: "NetherFiles Mods",
+        category: "Mods",
+        platform: "Vários jogos",
+        description: "Área para reunir modificações, conteúdos extras e personalizações de jogos.",
+        emoji: "🧩",
+        image: "",
+        url: ""
+      }
+    ];
 
-function render() {
-  const query = search.value.trim().toLocaleLowerCase("pt-BR");
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+    const filterButtons = document.querySelectorAll(".filter");
 
-  const filtered = games.filter(game => {
-    const matchesCategory =
-      selectedCategory === "Todos" ||
-      game.category === selectedCategory;
+    let activeCategory = "Todos";
 
-    const text = (
-      game.name + " " +
-      game.category + " " +
-      game.platform + " " +
-      game.description
-    ).toLocaleLowerCase("pt-BR");
+    function render() {
+      const query = search.value.trim().toLowerCase();
 
-    return matchesCategory && text.includes(query);
-  });
+      const filteredGames = games.filter(game => {
+        const matchesSearch =
+          game.name.toLowerCase().includes(query) ||
+          game.category.toLowerCase().includes(query) ||
+          game.platform.toLowerCase().includes(query) ||
+          game.description.toLowerCase().includes(query);
 
-  count.textContent = filtered.length +
-    (filtered.length === 1 ? " item" : " itens");
+        const matchesCategory =
+          activeCategory === "Todos" ||
+          game.category === activeCategory;
 
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="empty">Nenhum resultado encontrado.</div>';
-    return;
-  }
+        return matchesSearch && matchesCategory;
+      });
 
-  grid.innerHTML = filtered.map(game => `
-    <article class="card">
-      <div class="cover">
-        ${game.image
-          ? `<img src="${game.image}" alt="Imagem de ${game.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">`
-          : ''
-        }
-        <div class="placeholder" ${game.image ? 'style="display:none"' : ''}>
-          <span class="emoji">${game.emoji}</span>
-          <strong>${game.name}</strong>
-        </div>
-        <span class="cover-tag">${game.category}</span>
-      </div>
-      <div class="info">
-        <h3>${game.name}</h3>
-        <div class="platform">${game.platform}</div>
-        <p class="description">${game.description}</p>
-        <a class="card-btn"
-           href="${game.url || '#'}"
-           ${game.url ? 'target="_blank" rel="noopener noreferrer"' : ''}
-           ${game.url ? '' : 'data-unavailable="true"'}
-        >${game.url ? 'Acessar projeto ↗' : 'Em breve'}</a>
-      </div>
-    </article>
-  `).join("");
+      if (filteredGames.length === 0) {
+        grid.innerHTML = '<p class="empty">Nenhum resultado encontrado.</p>';
+        return;
+      }
 
-  grid.querySelectorAll("[data-unavailable]").forEach(link => {
-    link.addEventListener("click", event => {
-      event.preventDefault();
-      alert("Este conteúdo estará disponível em breve.");
+      grid.innerHTML = filteredGames.map(game => {
+        const cover = game.image
+          ? `<img src="${game.image}" alt="Capa de ${game.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder">${game.emoji}</div>`
+          : `<div class="placeholder" style="display:flex">${game.emoji}</div>`;
+
+        const link = game.url
+          ? `<a class="card-link" href="${game.url}" target="_blank" rel="noopener noreferrer">Ver página ↗</a>`
+          : `<span class="card-link" style="background:#292929;color:#aaa">Em breve</span>`;
+
+        return `
+          <article class="card">
+            <div class="cover">${cover}</div>
+            <div class="card-content">
+              <span class="category">${game.category}</span>
+              <h3>${game.name}</h3>
+              <p class="platform">${game.platform}</p>
+              <p class="description">${game.description}</p>
+              ${link}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    search.addEventListener("input", render);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        activeCategory = button.dataset.category;
+
+        filterButtons.forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
+
+        render();
+      });
     });
-  });
-}
 
-document.getElementById("categories").addEventListener("click", event => {
-  const button = event.target.closest("button[data-category]");
-  if (!button) return;
+    render();
+  </script>
 
-  selectedCategory = button.dataset.category;
-
-  document.querySelectorAll(".filter").forEach(item => {
-    item.classList.toggle("active", item === button);
-  });
-
-  render();
-});
-
-search.addEventListener("input", render);
-document.getElementById("year").textContent = new Date().getFullYear();
-render();
-</script>
 </body>
 </html>
