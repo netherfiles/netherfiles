@@ -1,52 +1,160 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080808">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080808">
 <title>NetherFiles — Sua biblioteca de games</title>
 <style>
 :root{--bg:#080808;--panel:#111;--hover:#191919;--border:#292929;--text:#f5f5f5;--muted:#999}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
-header{padding:32px 20px 24px;text-align:center;border-bottom:1px solid var(--border);background:#0b0b0b}.logo{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:5px}.subtitle{color:var(--muted);margin-top:9px;font-size:14px}
-main{max-width:1200px;margin:auto;padding:24px 16px 50px}.search{width:100%;padding:15px 17px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white;font-size:16px;outline:none;margin-bottom:18px}.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px}
-button{cursor:pointer}.filter,.admin-btn,.action{border:1px solid var(--border);background:var(--panel);color:#ccc;padding:9px 15px;border-radius:20px;font-size:13px}.filter.active,.filter:hover{background:#eee;color:#111;border-color:#eee}
-.section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}.section-title{font-size:21px}.admin-btn{background:#eee;color:#111;border-radius:8px;font-weight:bold}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s;min-width:0}.card:hover{transform:translateY(-4px);border-color:#666;background:var(--hover)}
-.cover{height:155px;background:#1b1b1b;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#252525,#101010)}
-.content{padding:15px}.category{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#ddd;background:#252525;border:1px solid #383838;padding:5px 8px;border-radius:5px;margin-bottom:10px}.card h3{font-size:17px;margin-bottom:7px}.platform{color:#aaa;font-size:12px;margin-bottom:10px}.description{color:#aaa;font-size:13px;line-height:1.5;min-height:58px;overflow-wrap:anywhere}
-.card-link{display:block;margin-top:15px;padding:11px;text-align:center;background:#eee;color:#111;text-decoration:none;border-radius:7px;font-size:13px;font-weight:bold}.empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:40px 10px}.admin-actions{display:flex;gap:8px;margin-top:10px}.action{flex:1;border-radius:7px}.edit{background:#242424;color:white}.delete{background:#3a1717;color:#ffb9b9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+header{padding:32px 20px 24px;text-align:center;border-bottom:1px solid var(--border);background:#0b0b0b}
+.logo{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:5px}
+.subtitle{color:var(--muted);margin-top:9px;font-size:14px}
+main{max-width:1200px;margin:auto;padding:24px 16px 50px}
+.search{width:100%;padding:15px 17px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white;font-size:16px;outline:none;margin-bottom:18px}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px}
+button{cursor:pointer}
+.filter,.admin-btn,.action{border:1px solid var(--border);background:var(--panel);color:#ccc;padding:9px 15px;border-radius:20px;font-size:13px}
+.filter.active,.filter:hover{background:#eee;color:#111;border-color:#eee}
+.section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}
+.section-title{font-size:21px}
+.admin-btn{background:#eee;color:#111;border-radius:8px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s;min-width:0}
+.card:hover{transform:translateY(-4px);border-color:#666;background:var(--hover)}
+.cover{height:155px;background:#1b1b1b;overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#252525,#101010)}
+.content{padding:15px}
+.category{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#ddd;background:#252525;border:1px solid #383838;padding:5px 8px;border-radius:5px;margin-bottom:10px}
+.card h3{font-size:17px;margin-bottom:7px}
+.platform{color:#aaa;font-size:12px;margin-bottom:10px}
+.description{color:#aaa;font-size:13px;line-height:1.5;min-height:58px;overflow-wrap:anywhere}
+.card-link{display:block;margin-top:15px;padding:11px;text-align:center;background:#eee;color:#111;text-decoration:none;border-radius:7px;font-size:13px;font-weight:bold}
+.empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:40px 10px}
+.admin-actions{display:flex;gap:8px;margin-top:10px}
+.action{flex:1;border-radius:7px}
+.edit{background:#242424;color:white}
+.delete{background:#3a1717;color:#ffb9b9}
 footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;color:#777;font-size:12px}
-.backdrop{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:10;overflow:auto}.backdrop.open{display:flex}.modal{width:min(100%,520px);max-height:92vh;overflow:auto;background:#111;border:1px solid #383838;border-radius:14px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{font-size:20px}.close{background:transparent;color:white;border:0;font-size:28px}.notice{font-size:13px;line-height:1.5;color:#bbb;margin-bottom:14px}.field{display:block;margin-bottom:13px}.field span{display:block;color:#bbb;font-size:13px;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;background:#080808;color:#fff;border:1px solid #383838;border-radius:8px;padding:12px;font:inherit;font-size:14px}.field textarea{min-height:85px;resize:vertical}.form-buttons{display:flex;gap:10px;margin-top:16px}.form-buttons button{flex:1;border:0;border-radius:8px;padding:12px;font-weight:bold}.save{background:#eee;color:#111}.cancel{background:#292929;color:#fff}[hidden]{display:none!important}#message{font-size:13px;color:#ddd;margin-top:12px;line-height:1.5}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cover{height:125px}.content{padding:12px}.card h3{font-size:15px}.description{font-size:12px}}@media(max-width:360px){.grid{grid-template-columns:1fr}.cover{height:175px}}
+.backdrop{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:10;overflow:auto}
+.backdrop.open{display:flex}
+.modal{width:min(100%,520px);max-height:92vh;overflow:auto;background:#111;border:1px solid #383838;border-radius:14px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-head h2{font-size:20px}
+.close{background:transparent;color:white;border:0;font-size:28px}
+.notice{font-size:13px;line-height:1.5;color:#bbb;margin-bottom:14px}
+.field{display:block;margin-bottom:13px}
+.field span{display:block;color:#bbb;font-size:13px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:#080808;color:#fff;border:1px solid #383838;border-radius:8px;padding:12px;font:inherit;font-size:14px}
+.field textarea{min-height:85px;resize:vertical}
+.form-buttons{display:flex;gap:10px;margin-top:16px}
+.form-buttons button{flex:1;border:0;border-radius:8px;padding:12px;font-weight:bold}
+.save{background:#eee;color:#111}
+.cancel{background:#292929;color:#fff}
+[hidden]{display:none!important}
+#message{font-size:13px;color:#ddd;margin-top:12px;line-height:1.5}
+.admin-list{margin-top:18px;border-top:1px solid var(--border);padding-top:14px}
+.admin-list h3{font-size:15px;margin-bottom:10px}
+.admin-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #292929}
+.item-name{flex:1;min-width:0;font-size:13px;overflow-wrap:anywhere}
+.item-meta{color:#888;font-size:11px;margin-top:3px}
+.admin-item button{padding:8px 10px;font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cover{height:125px}.content{padding:12px}.card h3{font-size:15px}.description{font-size:12px}}
+@media(max-width:360px){.grid{grid-template-columns:1fr}.cover{height:175px}.admin-item{flex-wrap:wrap}}
 </style>
 </head>
 <body>
-<header><div class="logo">NETHERFILES</div><p class="subtitle">o meu, o seu, os nossos arquivos</p></header>
+<header>
+  <div class="logo">NETHERFILES</div>
+  <p class="subtitle">o meu, o seu, os nossos arquivos</p>
+</header>
+
 <main>
-<input id="search" class="search" type="search" placeholder="🔎 Pesquisar jogos, apps e ferramentas..." aria-label="Pesquisar biblioteca">
-<div class="filters"><button class="filter active" data-cat="Todos">Todos</button><button class="filter" data-cat="Jogos">Jogos</button><button class="filter" data-cat="Emuladores">Emuladores</button><button class="filter" data-cat="Ferramentas">Ferramentas</button><button class="filter" data-cat="Apps">Apps</button><button class="filter" data-cat="Mods">Mods</button><button class="filter" data-cat="Ports">Ports</button></div>
-<div class="section-row"><h2 class="section-title">Biblioteca</h2><button id="adminOpen" class="admin-btn">⚙ Admin</button></div><p id="status" class="notice">Carregando biblioteca...</p><section id="grid" class="grid"></section>
-</main><footer><p>NetherFiles © 2026</p><p style="margin-top:7px">Sua biblioteca de games, em um só lugar.</p></footer>
-<div class="backdrop" id="backdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-<div class="modal-head"><h2 id="modalTitle">Painel administrativo</h2><button id="closeModal" class="close" aria-label="Fechar">×</button></div>
-<div id="loginArea"><p class="notice">Entre com o e-mail e a senha do usuário criado em Supabase → Authentication → Users.</p><form id="loginForm">
-<label class="field"><span>E-mail</span><input id="email" type="email" autocomplete="username" required></label><label class="field"><span>Senha</span><input id="password" type="password" autocomplete="current-password" required></label>
-<div class="form-buttons"><button class="save" type="submit">Entrar</button><button class="cancel" type="button" id="cancelLogin">Cancelar</button></div></form></div>
-<div id="adminArea" hidden><p id="signedIn" class="notice">Administrador conectado.</p><form id="gameForm"><input id="itemId" type="hidden">
-<label class="field"><span>Nome *</span><input id="name" required maxlength="120"></label>
-<label class="field"><span>Categoria *</span><select id="category"><option>Jogos</option><option>Emuladores</option><option>Ferramentas</option><option>Apps</option><option>Mods</option><option>Ports</option></select></label>
-<label class="field"><span>Plataforma</span><input id="platform" placeholder="Ex.: Android, PC, PS2"></label>
-<label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
-<label class="field"><span>URL do download ou página *</span><input id="url" type="url" required placeholder="https://..."></label>
-<label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
-<div class="form-buttons"><button id="saveItem" class="save" type="submit">Publicar item</button><button id="clearForm" class="cancel" type="button">Limpar</button></div></form><div class="form-buttons"><button id="logout" class="cancel" type="button">Sair da conta</button></div></div>
-<p id="message" role="status"></p></section></div>
+  <input id="search" class="search" type="search" placeholder="🔎 Pesquisar jogos, apps e ferramentas..." aria-label="Pesquisar biblioteca">
+  <div class="filters">
+    <button class="filter active" data-cat="Todos">Todos</button>
+    <button class="filter" data-cat="Jogos">Jogos</button>
+    <button class="filter" data-cat="Emuladores">Emuladores</button>
+    <button class="filter" data-cat="Ferramentas">Ferramentas</button>
+    <button class="filter" data-cat="Apps">Apps</button>
+    <button class="filter" data-cat="Mods">Mods</button>
+    <button class="filter" data-cat="Ports">Ports</button>
+  </div>
+  <div class="section-row">
+    <h2 class="section-title">Biblioteca</h2>
+    <button id="adminOpen" class="admin-btn">⚙ Admin</button>
+  </div>
+  <p id="status" class="notice">Carregando biblioteca...</p>
+  <section id="grid" class="grid"></section>
+</main>
+
+<footer>
+  <p>NetherFiles © 2026</p>
+  <p style="margin-top:7px">Sua biblioteca de games, em um só lugar.</p>
+</footer>
+
+<div class="backdrop" id="backdrop">
+<section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-head">
+    <h2 id="modalTitle">Painel administrativo</h2>
+    <button id="closeModal" class="close" aria-label="Fechar">×</button>
+  </div>
+
+  <div id="loginArea">
+    <p class="notice">Entre com o e-mail e a senha do usuário criado em Supabase → Authentication → Users.</p>
+    <form id="loginForm">
+      <label class="field"><span>E-mail</span><input id="email" type="email" autocomplete="username" required></label>
+      <label class="field"><span>Senha</span><input id="password" type="password" autocomplete="current-password" required></label>
+      <div class="form-buttons">
+        <button class="save" type="submit">Entrar</button>
+        <button class="cancel" type="button" id="cancelLogin">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="adminArea" hidden>
+    <p id="signedIn" class="notice">Administrador conectado.</p>
+    <form id="gameForm">
+      <input id="itemId" type="hidden">
+      <input id="starterId" type="hidden">
+
+      <label class="field"><span>Nome *</span><input id="name" required maxlength="120"></label>
+      <label class="field"><span>Categoria *</span>
+        <select id="category">
+          <option>Jogos</option><option>Emuladores</option><option>Ferramentas</option><option>Apps</option><option>Mods</option><option>Ports</option>
+        </select>
+      </label>
+      <label class="field"><span>Plataforma</span><input id="platform" placeholder="Ex.: Android, PC, PS2"></label>
+      <label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
+      <label class="field"><span>URL do download ou página *</span><input id="url" type="url" required placeholder="https://..."></label>
+      <label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
+      <div class="form-buttons">
+        <button id="saveItem" class="save" type="submit">Publicar item</button>
+        <button id="clearForm" class="cancel" type="button">Limpar</button>
+      </div>
+    </form>
+
+    <div class="admin-list">
+      <h3>Gerenciar catálogo</h3>
+      <p class="notice">Itens originais podem ser ocultados e restaurados neste navegador. Itens do Supabase podem ser editados e excluídos do banco.</p>
+      <div id="adminList"></div>
+    </div>
+    <div class="form-buttons"><button id="logout" class="cancel" type="button">Sair da conta</button></div>
+  </div>
+  <p id="message" role="status"></p>
+</section>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* Chave publishable pode ficar no frontend. Nunca use service_role neste arquivo. */
 const SUPABASE_URL="https://ppkwqxgqhttvemxkklfe.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_sEz77Swi4SeNlEGsU1tb1A_0yxkO_gY";
 const ADMIN_USER_ID="9543e587-b210-4466-830d-ce187f7c39d3";
 const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
 const starters=[
 ["Fuzz TV","Apps","Android","Um app de streaming completo para assistir a conteúdos de entretenimento.","📺","fuzztv.png","https://www.mediafire.com/file/eq69shm2dzrwq9z/fuzztv.apk/file"],
 ["Max Payne","Jogos","PC · PlayStation 2 · Xbox","Um clássico de ação noir, com tiroteios em câmera lenta e uma história sombria.","🔫","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/header.jpg","https://store.steampowered.com/app/12140/Max_Payne/"],
@@ -63,66 +171,263 @@ const starters=[
 ["NetherFiles Ports","Ports","Várias plataformas","Área para reunir ports e projetos de jogos adaptados para outras plataformas.","📦","",""],
 ["NetherFiles Mods","Mods","Vários jogos","Área para reunir modificações, conteúdos extras e personalizações de jogos.","🧩","",""]
 ].map((x,i)=>({id:"starter-"+i,name:x[0],category:x[1],platform:x[2],description:x[3],emoji:x[4],image:x[5],url:x[6],source:"starter"}));
+
 let games=[],activeCat="Todos",isAdmin=false;
 const $=id=>document.getElementById(id);
-function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function http(s){try{let u=new URL(s);return ["https:","http:"].includes(u.protocol)?u.href:"";}catch{return "";}}
-function fromDb(g){return {...g,platform:g.platform||"Não informado",description:g.description||"",image:g.image||"",emoji:"🎮",source:"database"};}
+const HIDDEN_KEY="netherfiles_hidden_starters_v1";
+let hiddenStarters=readHiddenStarters();
+
+function readHiddenStarters(){
+  try{const v=JSON.parse(localStorage.getItem(HIDDEN_KEY)||"[]");return Array.isArray(v)?v:[];}
+  catch{return [];}
+}
+function writeHiddenStarters(){
+  try{localStorage.setItem(HIDDEN_KEY,JSON.stringify(hiddenStarters));return true;}
+  catch{return false;}
+}
+function esc(s=""){
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function http(s){
+  try{const u=new URL(s);return ["https:","http:"].includes(u.protocol)?u.href:"";}
+  catch{return "";}
+}
+function fromDb(g){
+  return {...g,platform:g.platform||"Não informado",description:g.description||"",image:g.image||"",emoji:"🎮",source:"database"};
+}
+
 function render(){
- const q=$("search").value.trim().toLowerCase();
- const list=games.filter(g=>[g.name,g.category,g.platform,g.description].join(" ").toLowerCase().includes(q)&&(activeCat==="Todos"||g.category===activeCat));
- if(!list.length){$("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';return;}
- $("grid").innerHTML=list.map(g=>{
-  const im=http(g.image);const cover=im?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">${g.emoji||"🎮"}</div>`:`<div class="placeholder">${g.emoji||"🎮"}</div>`;
-  const link=http(g.url)?`<a class="card-link" href="${esc(http(g.url))}" target="_blank" rel="noopener noreferrer">Acessar / baixar ↗</a>`:`<span class="card-link">Em breve</span>`;
-  const actions=isAdmin&&g.source==="database"?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`:"";
-  return `<article class="card"><div class="cover">${cover}</div><div class="content"><span class="category">${esc(g.category)}</span><h3>${esc(g.name)}</h3><p class="platform">${esc(g.platform||"Não informado")}</p><p class="description">${esc(g.description)}</p>${link}${actions}</div></article>`;
- }).join("");
+  const q=$("search").value.trim().toLowerCase();
+  const list=games.filter(g=>!hiddenStarters.includes(g.id)&&[g.name,g.category,g.platform,g.description].join(" ").toLowerCase().includes(q)&&(activeCat==="Todos"||g.category===activeCat));
+  if(!list.length){$("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';return;}
+  $("grid").innerHTML=list.map(g=>{
+    const im=http(g.image);
+    const cover=im
+      ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">${g.emoji||"🎮"}</div>`
+      :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+    const link=http(g.url)?`<a class="card-link" href="${esc(http(g.url))}" target="_blank" rel="noopener noreferrer">Acessar / baixar ↗</a>`:`<span class="card-link">Em breve</span>`;
+    const actions=isAdmin?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`:"";
+    return `<article class="card"><div class="cover">${cover}</div><div class="content"><span class="category">${esc(g.category)}</span><h3>${esc(g.name)}</h3><p class="platform">${esc(g.platform||"Não informado")}</p><p class="description">${esc(g.description)}</p>${link}${actions}</div></article>`;
+  }).join("");
 }
-async function loadGames(){
- $("status").textContent="Carregando biblioteca...";
- if(!db){games=starters;$("status").textContent="Não foi possível iniciar a conexão com o Supabase.";render();return;}
- const {data,error}=await db.from("games").select("*").order("created_at",{ascending:false});
- if(error){console.error(error);games=starters;$("status").textContent="Erro ao carregar do banco; exibindo itens de demonstração.";}
- else{games=[...data.map(fromDb),...starters];$("status").textContent="Biblioteca atualizada.";}
- render();
+
+function renderAdminList(){
+  if(!$("adminList"))return;
+  const visible=games.filter(g=>!hiddenStarters.includes(g.id));
+  const hidden=games.filter(g=>hiddenStarters.includes(g.id));
+  const rows=[...visible,...hidden];
+  if(!rows.length){$("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';return;}
+  $("adminList").innerHTML=rows.map(g=>{
+    const hiddenItem=hiddenStarters.includes(g.id);
+    let buttons="";
+    if(g.source==="starter"){
+      buttons=hiddenItem
+        ?`<button class="action edit" data-restore="${esc(g.id)}">Restaurar</button>`
+        :`<button class="action delete" data-hide="${esc(g.id)}">Excluir</button>`;
+    }else{
+      buttons=`<button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button>`;
+    }
+    return `<div class="admin-item"><div class="item-name"><strong>${esc(g.name)}</strong><div class="item-meta">${esc(g.category)} · ${g.source==="starter"?"Original do site":"Supabase"}${hiddenItem?" · Oculto neste navegador":""}</div></div>${buttons}</div>`;
+  }).join("");
 }
-function openModal(){$("backdrop").classList.add("open");$("message").textContent="";syncUI();}
+
+function openModal(){
+  $("backdrop").classList.add("open");
+  $("message").textContent="";
+  syncUI();
+  if(isAdmin)renderAdminList();
+}
 function closeModal(){$("backdrop").classList.remove("open");}
-function syncUI(){$("loginArea").hidden=isAdmin;$("adminArea").hidden=!isAdmin;$("adminOpen").textContent=isAdmin?"＋ Adicionar item":"⚙ Admin";}
-function clearForm(){$("gameForm").reset();$("itemId").value="";$("modalTitle").textContent="Adicionar item";$("saveItem").textContent="Publicar item";}
-function fillForm(g){$("itemId").value=g.id;$("name").value=g.name||"";$("category").value=g.category||"Apps";$("platform").value=g.platform||"";$("image").value=g.image||"";$("url").value=g.url||"";$("description").value=g.description||"";$("modalTitle").textContent="Editar item";$("saveItem").textContent="Salvar alterações";openModal();}
-$("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};$("closeModal").onclick=closeModal;$("cancelLogin").onclick=closeModal;
+function syncUI(){
+  $("loginArea").hidden=isAdmin;
+  $("adminArea").hidden=!isAdmin;
+  $("adminOpen").textContent=isAdmin?"＋ Adicionar item":"⚙ Admin";
+}
+function clearForm(){
+  $("gameForm").reset();
+  $("itemId").value="";
+  $("starterId").value="";
+  $("modalTitle").textContent="Adicionar item";
+  $("saveItem").textContent="Publicar item";
+}
+function fillForm(g){
+  if(g.source==="starter"){
+    $("message").textContent="Itens originais são fixos nesta versão. Para editar um original, cadastre uma cópia no Supabase; você pode ocultar o original.";
+    return;
+  }
+  $("itemId").value=g.id;
+  $("name").value=g.name||"";
+  $("category").value=g.category||"Apps";
+  $("platform").value=g.platform||"";
+  $("image").value=g.image||"";
+  $("url").value=g.url||"";
+  $("description").value=g.description||"";
+  $("modalTitle").textContent="Editar item";
+  $("saveItem").textContent="Salvar alterações";
+  openModal();
+}
+
+$("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
+$("closeModal").onclick=closeModal;
+$("cancelLogin").onclick=closeModal;
 $("backdrop").addEventListener("click",e=>{if(e.target===$("backdrop"))closeModal();});
 $("search").addEventListener("input",render);
-document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{activeCat=b.dataset.cat;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));render();}));
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+  activeCat=b.dataset.cat;
+  document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+}));
 $("clearForm").onclick=clearForm;
+
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();$("message").textContent="Entrando...";
- if(!db){$("message").textContent="Supabase não está disponível. Atualize a página e tente novamente.";return;}
- const {data,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
- if(error){$("message").textContent="Falha no login. Confira e-mail e senha.";console.error(error);return;}
- if(data.user?.id!==ADMIN_USER_ID){await db.auth.signOut();$("message").textContent="Esta conta não é a administradora autorizada.";return;}
- isAdmin=true;$("signedIn").textContent="Conectado como "+(data.user.email||"administrador")+".";syncUI();$("message").textContent="Login realizado.";await loadGames();
+  e.preventDefault();
+  $("message").textContent="Entrando...";
+  if(!db){$("message").textContent="Supabase não está disponível. Atualize a página e tente novamente.";return;}
+  const {data,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  if(error){$("message").textContent="Falha no login. Confira e-mail e senha.";console.error(error);return;}
+  if(data.user?.id!==ADMIN_USER_ID){
+    await db.auth.signOut();
+    $("message").textContent="Esta conta não é a administradora autorizada.";
+    return;
+  }
+  isAdmin=true;
+  $("signedIn").textContent="Conectado como "+(data.user.email||"administrador")+".";
+  syncUI();
+  $("message").textContent="Login realizado.";
+  await loadGames();
 });
-$("logout").onclick=async()=>{if(db)await db.auth.signOut();isAdmin=false;clearForm();syncUI();$("message").textContent="Você saiu da conta.";render();};
+
+$("logout").onclick=async()=>{
+  if(db)await db.auth.signOut();
+  isAdmin=false;clearForm();syncUI();
+  $("message").textContent="Você saiu da conta.";
+  render();
+};
+
 $("gameForm").addEventListener("submit",async e=>{
- e.preventDefault();if(!db||!isAdmin){$("message").textContent="Entre com a conta administradora primeiro.";return;}
- const id=$("itemId").value;
- const payload={name:$("name").value.trim(),category:$("category").value,platform:$("platform").value.trim(),image:$("image").value.trim(),url:$("url").value.trim(),description:$("description").value.trim()};
- if(!http(payload.url)){$("message").textContent="O link precisa começar com http:// ou https://.";return;}
- if(payload.image&&!http(payload.image)){$("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";return;}
- $("message").textContent="Salvando...";
- const result=id?await db.from("games").update(payload).eq("id",id).select().single():await db.from("games").insert(payload).select().single();
- if(result.error){console.error(result.error);$("message").textContent="Erro ao salvar. Verifique as políticas RLS e as colunas da tabela.";return;}
- $("message").textContent="Item salvo!";clearForm();await loadGames();
+  e.preventDefault();
+  if(!db||!isAdmin){$("message").textContent="Entre com a conta administradora primeiro.";return;}
+  const id=$("itemId").value;
+  const payload={
+    name:$("name").value.trim(),
+    category:$("category").value,
+    platform:$("platform").value.trim(),
+    image:$("image").value.trim(),
+    url:$("url").value.trim(),
+    description:$("description").value.trim()
+  };
+  if(!http(payload.url)){$("message").textContent="O link precisa começar com http:// ou https://.";return;}
+  if(payload.image&&!http(payload.image)){$("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";return;}
+  $("message").textContent="Salvando...";
+  const result=id
+    ?await db.from("games").update(payload).eq("id",id).select().single()
+    :await db.from("games").insert(payload).select().single();
+  if(result.error){
+    console.error(result.error);
+    $("message").textContent="Erro ao salvar. Verifique as políticas RLS e as colunas da tabela.";
+    return;
+  }
+  $("message").textContent="Item salvo!";
+  clearForm();
+  await loadGames();
 });
+
+async function deleteDatabaseItem(id,name){
+  if(!confirm(`Tem certeza que deseja excluir "${name}" permanentemente do banco?`))return;
+  const {error}=await db.from("games").delete().eq("id",id);
+  if(error){alert("Falha ao excluir. Confira as políticas RLS.");console.error(error);return;}
+  await loadGames();
+  renderAdminList();
+  $("message").textContent="Item excluído do Supabase.";
+}
+function hideStarter(id,name){
+  if(!confirm(`Remover "${name}" do catálogo neste navegador?`))return;
+  if(!hiddenStarters.includes(id))hiddenStarters.push(id);
+  if(!writeHiddenStarters()){
+    hiddenStarters=hiddenStarters.filter(x=>x!==id);
+    alert("Não foi possível guardar a exclusão neste navegador.");
+    return;
+  }
+  render();
+  renderAdminList();
+  $("message").textContent="Item original ocultado neste navegador.";
+}
+function restoreStarter(id){
+  hiddenStarters=hiddenStarters.filter(x=>x!==id);
+  writeHiddenStarters();
+  render();
+  renderAdminList();
+  $("message").textContent="Item original restaurado.";
+}
+
 $("grid").addEventListener("click",async e=>{
- const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");
- if(edit){const g=games.find(x=>String(x.id)===edit.dataset.edit&&x.source==="database");if(g)fillForm(g);}
- if(del){if(!confirm("Tem certeza que deseja excluir este item?"))return;const {error}=await db.from("games").delete().eq("id",del.dataset.delete);if(error){alert("Falha ao excluir. Confira as políticas RLS.");console.error(error);return;}await loadGames();}
+  const edit=e.target.closest("[data-edit]");
+  const del=e.target.closest("[data-delete]");
+  if(edit){
+    const g=games.find(x=>String(x.id)===edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+  if(del){
+    const g=games.find(x=>String(x.id)===del.dataset.delete);
+    if(!g)return;
+    if(g.source==="starter")hideStarter(g.id,g.name);
+    else await deleteDatabaseItem(g.id,g.name);
+  }
 });
-if(db){db.auth.getSession().then(async({data})=>{const user=data.session?.user;if(user?.id===ADMIN_USER_ID){isAdmin=true;$("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";syncUI();}else if(user){await db.auth.signOut();}});}
+
+$("adminList").addEventListener("click",async e=>{
+  const hide=e.target.closest("[data-hide]");
+  const restore=e.target.closest("[data-restore]");
+  const edit=e.target.closest("[data-edit]");
+  const del=e.target.closest("[data-delete]");
+  if(hide){
+    const g=games.find(x=>x.id===hide.dataset.hide);
+    if(g)hideStarter(g.id,g.name);
+  }
+  if(restore)restoreStarter(restore.dataset.restore);
+  if(edit){
+    const g=games.find(x=>String(x.id)===edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+  if(del){
+    const g=games.find(x=>String(x.id)===del.dataset.delete);
+    if(g&&g.source==="database")await deleteDatabaseItem(g.id,g.name);
+  }
+});
+
+if(db){
+  db.auth.getSession().then(async({data})=>{
+    const user=data.session?.user;
+    if(user?.id===ADMIN_USER_ID){
+      isAdmin=true;
+      $("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
+      syncUI();
+      renderAdminList();
+    }else if(user){await db.auth.signOut();}
+  });
+}
+
+async function loadGames(){
+  $("status").textContent="Carregando biblioteca...";
+  if(!db){
+    games=starters;
+    $("status").textContent="Não foi possível iniciar a conexão com o Supabase.";
+    render();
+    return;
+  }
+  const {data,error}=await db.from("games").select("*").order("created_at",{ascending:false});
+  if(error){
+    console.error(error);
+    games=starters;
+    $("status").textContent="Erro ao carregar do banco; exibindo itens originais do site.";
+  }else{
+    games=[...data.map(fromDb),...starters];
+    $("status").textContent="Biblioteca atualizada.";
+  }
+  render();
+  if(isAdmin)renderAdminList();
+}
 loadGames();
 </script>
-</body></html>
+</body>
+</html>
