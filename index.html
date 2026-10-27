@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -83,10 +84,12 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
     <button class="filter" data-cat="Mods">Mods</button>
     <button class="filter" data-cat="Ports">Ports</button>
   </div>
+
   <div class="section-row">
     <h2 class="section-title">Biblioteca</h2>
-    <button id="adminOpen" class="admin-btn">⚙ Admin</button>
+    <button id="adminOpen" class="admin-btn" hidden>⚙ Admin</button>
   </div>
+
   <p id="status" class="notice">Carregando biblioteca...</p>
   <section id="grid" class="grid"></section>
 </main>
@@ -117,6 +120,7 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
 
   <div id="adminArea" hidden>
     <p id="signedIn" class="notice">Administrador conectado.</p>
+
     <form id="gameForm">
       <input id="itemId" type="hidden">
       <input id="starterId" type="hidden">
@@ -131,6 +135,7 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
       <label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
       <label class="field"><span>URL do download ou página *</span><input id="url" type="url" required placeholder="https://..."></label>
       <label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
+
       <div class="form-buttons">
         <button id="saveItem" class="save" type="submit">Publicar item</button>
         <button id="clearForm" class="cancel" type="button">Limpar</button>
@@ -142,8 +147,10 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
       <p class="notice">Excluir um item original oculta-o para todos os visitantes. Você pode restaurá-lo quando quiser. Itens do Supabase podem ser editados e excluídos permanentemente.</p>
       <div id="adminList"></div>
     </div>
+
     <div class="form-buttons"><button id="logout" class="cancel" type="button">Sair da conta</button></div>
   </div>
+
   <p id="message" role="status"></p>
 </section>
 </div>
@@ -311,10 +318,12 @@ function closeModal(){
   $("backdrop").classList.remove("open");
 }
 
+/* BOTÃO ADMIN: VISÍVEL SOMENTE PARA O ADMIN AUTORIZADO */
 function syncUI(){
   $("loginArea").hidden=isAdmin;
   $("adminArea").hidden=!isAdmin;
-  $("adminOpen").textContent=isAdmin?"＋ Adicionar item":"⚙ Admin";
+  $("adminOpen").hidden=!isAdmin;
+  $("adminOpen").textContent="＋ Adicionar item";
 }
 
 function clearForm(){
@@ -391,6 +400,8 @@ $("loginForm").addEventListener("submit",async e=>{
 
   if(data.user?.id!==ADMIN_USER_ID){
     await db.auth.signOut();
+    isAdmin=false;
+    syncUI();
     $("message").textContent="Esta conta não é a administradora autorizada.";
     return;
   }
@@ -464,6 +475,7 @@ $("gameForm").addEventListener("submit",async e=>{
 
 /* EXCLUIR ITEM CADASTRADO NO BANCO */
 async function deleteDatabaseItem(id,name){
+  if(!isAdmin||!db)return;
   if(!confirm(`Tem certeza que deseja excluir "${name}" permanentemente do banco?`))return;
 
   const {error}=await db.from("games").delete().eq("id",id);
@@ -557,6 +569,8 @@ async function restoreStarter(id){
 
 /* BOTÕES DOS CARDS */
 $("grid").addEventListener("click",async e=>{
+  if(!isAdmin)return;
+
   const edit=e.target.closest("[data-edit]");
   const del=e.target.closest("[data-delete]");
 
@@ -579,6 +593,8 @@ $("grid").addEventListener("click",async e=>{
 
 /* BOTÕES DA LISTA ADMINISTRATIVA */
 $("adminList").addEventListener("click",async e=>{
+  if(!isAdmin)return;
+
   const hide=e.target.closest("[data-hide]");
   const restore=e.target.closest("[data-restore]");
   const edit=e.target.closest("[data-edit]");
@@ -662,7 +678,7 @@ async function loadGames(){
   if(isAdmin)renderAdminList();
 }
 
-/* RECUPERAR SESSÃO */
+/* RECUPERAR SESSÃO E VALIDAR ADMINISTRADOR */
 if(db){
   db.auth.getSession().then(async({data,error})=>{
     if(error){
@@ -677,12 +693,19 @@ if(db){
       $("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
       syncUI();
       await loadGames();
-    }else if(user){
-      await db.auth.signOut();
+    }else{
+      isAdmin=false;
+      syncUI();
+
+      if(user){
+        await db.auth.signOut();
+      }
     }
   });
 }
 
+/* ESTADO INICIAL: BOTÃO ADMIN ESCONDIDO */
+syncUI();
 loadGames();
 </script>
 </body>
