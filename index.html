@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -38,6 +39,23 @@ header{position:sticky;top:0;z-index:5;padding:15px 18px;background:#101713;bord
 .admin-btn,.header-icon,.action{border:1px solid var(--border);background:#17231d;color:var(--text);padding:10px 13px;border-radius:9px;font-size:12px;font-weight:700}
 .admin-btn{background:var(--accent);border-color:var(--accent);color:#06150f}
 .header-icon{width:42px;height:42px;padding:0;font-size:18px}
+
+/* Imagem principal NetherFiles */
+.hero-logo{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:16px 12px 24px;
+  background:var(--bg);
+}
+.hero-logo img{
+  display:block;
+  width:min(100%,680px);
+  height:auto;
+  object-fit:contain;
+  border-radius:12px;
+}
 
 main{max-width:1120px;margin:auto;padding:28px 16px 44px}
 .catalog-panel{border:1px solid var(--border);border-radius:22px;background:var(--panel);overflow:hidden}
@@ -119,6 +137,7 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
  .subtitle{font-size:11px}
  .admin-btn{padding:10px;font-size:11px}
  .header-icon{width:39px;height:39px}
+ .hero-logo{padding:12px 10px 18px}
  main{padding:18px 12px 32px}
  .catalog-intro{padding:23px 20px 20px}
  .intro-copy{font-size:14px}
@@ -164,6 +183,15 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
     </div>
   </div>
 </header>
+
+<!-- Imagem estática do logo -->
+<section class="hero-logo">
+  <img
+    src="https://netherfiles.github.io/netherfiles/file_0000000031e4820eacf14cad738f0f7b.png"
+    alt="NetherFiles com a namorada em cartoon 3D"
+    loading="eager"
+  >
+</section>
 
 <main>
   <div id="catalogPage">
