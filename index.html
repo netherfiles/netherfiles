@@ -234,47 +234,87 @@ function fromDb(g){
 function visibleGames(){
   return games.filter(g=>!hiddenStarters.includes(g.id));
 }
+
+/* PÁGINA DE DETALHES:
+   A ISO só aparece para itens da categoria Jogos
+   e somente se houver um link de ISO cadastrado. */
 function openDetail(id){
   const g=games.find(x=>String(x.id)===String(id));
   if(!g)return;
+
   currentDetailId=g.id;
   $("catalogPage").hidden=true;
   $("detailPage").hidden=false;
+
   const im=http(g.image);
   const cover=im
     ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" onerror="this.style.display='none'">`
     :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+
   const mainUrl=http(g.url);
   const isoUrl=http(g.iso_url);
+  const isGame=g.category==="Jogos";
+
+  const apkBox=mainUrl?`
+    <div class="download-box">
+      <h3>📱 APK / PORT</h3>
+      <p>Aplicativo, port ou download principal.</p>
+      <a class="download-button" href="${esc(mainUrl)}"
+         target="_blank" rel="noopener noreferrer">
+        BAIXAR APK / PORT ↗
+      </a>
+    </div>`:"";
+
+  const isoBox=isGame&&isoUrl?`
+    <div class="download-box">
+      <h3>💿 ISO / ARQUIVO</h3>
+      <p>Arquivo do jogo ou ISO.</p>
+      <a class="download-button" href="${esc(isoUrl)}"
+         target="_blank" rel="noopener noreferrer">
+        BAIXAR ISO / ARQUIVO ↗
+      </a>
+    </div>`:"";
+
+  const downloadCount=(apkBox?1:0)+(isoBox?1:0);
+
   $("detailContent").innerHTML=`
     <article class="detail">
       <div class="detail-cover">${cover}</div>
       <div class="detail-content">
         <span class="category">${esc(g.category)}</span>
         <h1>${esc(g.name)}</h1>
-        <p class="detail-meta">Plataforma: ${esc(g.platform||"Não informado")}</p>
-        <p class="detail-description">${esc(g.description||"Nenhuma descrição informada.")}</p>
-        <div class="downloads">
-          <div class="download-box">
-            <h3>📱 APK / PORT</h3>
-            <p>Aplicativo, port ou download principal.</p>
-            ${mainUrl?`<a class="download-button" href="${esc(mainUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR APK / PORT ↗</a>`:`<div class="no-download">Link ainda não adicionado.</div>`}
-          </div>
-          <div class="download-box">
-            <h3>💿 ISO / ARQUIVO</h3>
-            <p>Arquivo do jogo, ISO ou pacote adicional.</p>
-            ${isoUrl?`<a class="download-button" href="${esc(isoUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ISO / ARQUIVO ↗</a>`:`<div class="no-download">Link ainda não adicionado.</div>`}
-          </div>
+        <p class="detail-meta">
+          Plataforma: ${esc(g.platform||"Não informado")}
+        </p>
+        <p class="detail-description">
+          ${esc(g.description||"Nenhuma descrição informada.")}
+        </p>
+
+        <div class="downloads" style="${
+          downloadCount===1 ? "grid-template-columns:1fr;" :
+          downloadCount===0 ? "grid-template-columns:1fr;" : ""
+        }">
+          ${apkBox}
+          ${isoBox}
+          ${downloadCount===0
+            ? '<p class="no-download">Nenhum download disponível no momento.</p>'
+            : ''}
         </div>
-        ${isAdmin?`<div class="admin-actions"><button class="action edit" id="detailEdit">Editar jogo</button></div>`:""}
+
+        ${isAdmin
+          ? '<div class="admin-actions"><button class="action edit" id="detailEdit">Editar jogo</button></div>'
+          : ''}
       </div>
     </article>`;
+
   if(isAdmin){
     $("detailEdit").onclick=()=>fillForm(g);
   }
+
   history.replaceState(null,"","#jogo-"+encodeURIComponent(g.id));
   window.scrollTo(0,0);
 }
+
 function backToCatalog(){
   $("detailPage").hidden=true;
   $("catalogPage").hidden=false;
@@ -282,23 +322,28 @@ function backToCatalog(){
   history.replaceState(null,"",location.pathname+location.search);
 }
 $("backToCatalog").onclick=backToCatalog;
+
 function render(){
   const q=$("search").value.trim().toLowerCase();
   const list=visibleGames().filter(g=>
     [g.name,g.category,g.platform,g.description].join(" ").toLowerCase().includes(q)&&
     (activeCat==="Todos"||g.category===activeCat)
   );
+
   if(!list.length){
     $("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';
     return;
   }
+
   $("grid").innerHTML=list.map(g=>{
     const im=http(g.image);
     const cover=im
       ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">${g.emoji||"🎮"}</div>`
       :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+
     const actions=isAdmin
       ?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`:"";
+
     return `<article class="card">
       <div class="cover">${cover}</div>
       <div class="content">
@@ -312,14 +357,21 @@ function render(){
     </article>`;
   }).join("");
 }
+
 function renderAdminList(){
   const visible=games.filter(g=>!hiddenStarters.includes(g.id));
   const hidden=games.filter(g=>hiddenStarters.includes(g.id));
   const rows=[...visible,...hidden];
-  if(!rows.length){$("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';return;}
+
+  if(!rows.length){
+    $("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';
+    return;
+  }
+
   $("adminList").innerHTML=rows.map(g=>{
     const hiddenItem=hiddenStarters.includes(g.id);
     let buttons="";
+
     if(g.source==="starter"){
       buttons=hiddenItem
         ?`<button class="action edit" data-restore="${esc(g.id)}">Restaurar</button>`
@@ -327,40 +379,64 @@ function renderAdminList(){
     }else{
       buttons=`<button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button>`;
     }
+
     return `<div class="admin-item"><div class="item-name"><strong>${esc(g.name)}</strong>
       <div class="item-meta">${esc(g.category)} · ${g.source==="starter"?"Original":"Supabase"}${hiddenItem?" · Oculto":""}</div>
       </div>${buttons}</div>`;
   }).join("");
 }
+
 function openModal(){
-  $("backdrop").classList.add("open");$("message").textContent="";syncUI();
+  $("backdrop").classList.add("open");
+  $("message").textContent="";
+  syncUI();
   if(isAdmin)renderAdminList();
 }
-function closeModal(){$("backdrop").classList.remove("open");}
+function closeModal(){
+  $("backdrop").classList.remove("open");
+}
 function syncUI(){
-  $("loginArea").hidden=isAdmin;$("adminArea").hidden=!isAdmin;
-  $("adminOpen").hidden=!isAdmin;$("adminOpen").textContent="＋ Adicionar item";
+  $("loginArea").hidden=isAdmin;
+  $("adminArea").hidden=!isAdmin;
+  $("adminOpen").hidden=!isAdmin;
+  $("adminOpen").textContent="＋ Adicionar item";
 }
 function clearForm(){
-  $("gameForm").reset();$("itemId").value="";
-  $("modalTitle").textContent="Adicionar item";$("saveItem").textContent="Publicar item";
+  $("gameForm").reset();
+  $("itemId").value="";
+  $("modalTitle").textContent="Adicionar item";
+  $("saveItem").textContent="Publicar item";
 }
 function fillForm(g){
   if(g.source==="starter"){
     $("message").textContent="Itens originais não podem ser editados diretamente. Cadastre uma versão própria ou oculte este item.";
     return;
   }
-  $("itemId").value=g.id;$("name").value=g.name||"";
-  $("category").value=g.category||"Apps";$("platform").value=g.platform||"";
-  $("image").value=g.image||"";$("url").value=g.url||"";
-  $("isoUrl").value=g.iso_url||"";$("description").value=g.description||"";
-  $("modalTitle").textContent="Editar item";$("saveItem").textContent="Salvar alterações";
+
+  $("itemId").value=g.id;
+  $("name").value=g.name||"";
+  $("category").value=g.category||"Apps";
+  $("platform").value=g.platform||"";
+  $("image").value=g.image||"";
+  $("url").value=g.url||"";
+  $("isoUrl").value=g.iso_url||"";
+  $("description").value=g.description||"";
+  $("modalTitle").textContent="Editar item";
+  $("saveItem").textContent="Salvar alterações";
   openModal();
 }
-$("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
-$("closeModal").onclick=closeModal;$("cancelLogin").onclick=closeModal;
-$("backdrop").addEventListener("click",e=>{if(e.target===$("backdrop"))closeModal();});
+
+$("adminOpen").onclick=()=>{
+  openModal();
+  if(isAdmin)clearForm();
+};
+$("closeModal").onclick=closeModal;
+$("cancelLogin").onclick=closeModal;
+$("backdrop").addEventListener("click",e=>{
+  if(e.target===$("backdrop"))closeModal();
+});
 $("search").addEventListener("input",render);
+
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
   activeCat=b.dataset.cat;
   document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));
@@ -369,130 +445,260 @@ document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
 $("clearForm").onclick=clearForm;
 
 $("loginForm").addEventListener("submit",async e=>{
-  e.preventDefault();$("message").textContent="Entrando...";
-  if(!db){$("message").textContent="Supabase indisponível.";return;}
-  const {data,error}=await db.auth.signInWithPassword({
-    email:$("email").value.trim(),password:$("password").value
-  });
-  if(error){$("message").textContent="Falha no login. Confira e-mail e senha.";console.error(error);return;}
-  if(data.user?.id!==ADMIN_USER_ID){
-    await db.auth.signOut();isAdmin=false;syncUI();
-    $("message").textContent="Esta conta não é a administradora autorizada.";return;
+  e.preventDefault();
+  $("message").textContent="Entrando...";
+
+  if(!db){
+    $("message").textContent="Supabase indisponível.";
+    return;
   }
+
+  const {data,error}=await db.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+
+  if(error){
+    $("message").textContent="Falha no login. Confira e-mail e senha.";
+    console.error(error);
+    return;
+  }
+
+  if(data.user?.id!==ADMIN_USER_ID){
+    await db.auth.signOut();
+    isAdmin=false;
+    syncUI();
+    $("message").textContent="Esta conta não é a administradora autorizada.";
+    return;
+  }
+
   isAdmin=true;
   $("signedIn").textContent="Conectado como "+(data.user.email||"administrador")+".";
-  syncUI();$("message").textContent="Login realizado.";
+  syncUI();
+  $("message").textContent="Login realizado.";
   await loadGames();
 });
+
 $("logout").onclick=async()=>{
   if(db)await db.auth.signOut();
-  isAdmin=false;clearForm();syncUI();$("message").textContent="Você saiu da conta.";render();
+  isAdmin=false;
+  clearForm();
+  syncUI();
+  $("message").textContent="Você saiu da conta.";
+  render();
 };
 
 $("gameForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  if(!db||!isAdmin){$("message").textContent="Entre com a conta administradora primeiro.";return;}
+
+  if(!db||!isAdmin){
+    $("message").textContent="Entre com a conta administradora primeiro.";
+    return;
+  }
+
   const id=$("itemId").value;
   const payload={
-    name:$("name").value.trim(),category:$("category").value,
-    platform:$("platform").value.trim(),image:$("image").value.trim(),
-    url:$("url").value.trim(),iso_url:$("isoUrl").value.trim(),
+    name:$("name").value.trim(),
+    category:$("category").value,
+    platform:$("platform").value.trim(),
+    image:$("image").value.trim(),
+    url:$("url").value.trim(),
+    iso_url:$("isoUrl").value.trim(),
     description:$("description").value.trim()
   };
+
   if(!payload.url&&!payload.iso_url){
-    $("message").textContent="Preencha pelo menos um link de download.";return;
+    $("message").textContent="Preencha pelo menos um link de download.";
+    return;
   }
   if(payload.url&&!http(payload.url)){
-    $("message").textContent="O link principal precisa começar com http:// ou https://.";return;
+    $("message").textContent="O link principal precisa começar com http:// ou https://.";
+    return;
   }
   if(payload.iso_url&&!http(payload.iso_url)){
-    $("message").textContent="O link da ISO precisa começar com http:// ou https://.";return;
+    $("message").textContent="O link da ISO precisa começar com http:// ou https://.";
+    return;
   }
   if(payload.image&&!http(payload.image)){
-    $("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";return;
+    $("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";
+    return;
   }
+
   $("message").textContent="Salvando...";
+
   const result=id
     ?await db.from("games").update(payload).eq("id",id).select().single()
     :await db.from("games").insert(payload).select().single();
+
   if(result.error){
     console.error(result.error);
     $("message").textContent="Erro ao salvar. Confirme a coluna iso_url e as políticas RLS.";
     return;
   }
+
   $("message").textContent="Item salvo!";
-  clearForm();await loadGames();
+  clearForm();
+  await loadGames();
 });
 
 async function deleteDatabaseItem(id,name){
   if(!isAdmin||!db)return;
   if(!confirm(`Excluir "${name}" permanentemente do banco?`))return;
+
   const {error}=await db.from("games").delete().eq("id",id);
-  if(error){alert("Falha ao excluir. Confira as políticas RLS.");console.error(error);return;}
-  await loadGames();renderAdminList();$("message").textContent="Item excluído para todos.";
+
+  if(error){
+    alert("Falha ao excluir. Confira as políticas RLS.");
+    console.error(error);
+    return;
+  }
+
+  await loadGames();
+  renderAdminList();
+  $("message").textContent="Item excluído para todos.";
 }
+
 async function hideStarter(id,name){
   if(!db||!isAdmin)return;
-  if(hiddenLoadError){$("message").textContent="Não foi possível confirmar as exclusões globais. Verifique hidden_starters.";return;}
+
+  if(hiddenLoadError){
+    $("message").textContent="Não foi possível confirmar as exclusões globais. Verifique hidden_starters.";
+    return;
+  }
   if(hiddenStarters.includes(id))return;
   if(!confirm(`Ocultar "${name}" para TODOS os visitantes?`))return;
+
   const {error}=await db.from("hidden_starters").insert({starter_id:id});
-  if(error){console.error(error);$("message").textContent="Falha ao ocultar. Confira a tabela hidden_starters e as políticas RLS.";return;}
-  hiddenStarters.push(id);render();renderAdminList();$("message").textContent="Item ocultado para todos!";
+
+  if(error){
+    console.error(error);
+    $("message").textContent="Falha ao ocultar. Confira a tabela hidden_starters e as políticas RLS.";
+    return;
+  }
+
+  hiddenStarters.push(id);
+  render();
+  renderAdminList();
+  $("message").textContent="Item ocultado para todos!";
 }
+
 async function restoreStarter(id){
   if(!db||!isAdmin)return;
-  if(hiddenLoadError){$("message").textContent="Não foi possível confirmar as exclusões globais.";return;}
+
+  if(hiddenLoadError){
+    $("message").textContent="Não foi possível confirmar as exclusões globais.";
+    return;
+  }
+
   const item=starters.find(g=>g.id===id);
   if(!confirm(`Restaurar "${item?.name||id}" para todos os visitantes?`))return;
+
   const {error}=await db.from("hidden_starters").delete().eq("starter_id",id);
-  if(error){console.error(error);$("message").textContent="Falha ao restaurar.";return;}
+
+  if(error){
+    console.error(error);
+    $("message").textContent="Falha ao restaurar.";
+    return;
+  }
+
   hiddenStarters=hiddenStarters.filter(x=>x!==id);
-  render();renderAdminList();$("message").textContent="Item restaurado para todos!";
+  render();
+  renderAdminList();
+  $("message").textContent="Item restaurado para todos!";
 }
 
 $("grid").addEventListener("click",async e=>{
   const open=e.target.closest("[data-open]");
-  if(open){openDetail(open.dataset.open);return;}
+  if(open){
+    openDetail(open.dataset.open);
+    return;
+  }
+
   if(!isAdmin)return;
+
   const edit=e.target.closest("[data-edit]");
   const del=e.target.closest("[data-delete]");
-  if(edit){const g=games.find(x=>String(x.id)===edit.dataset.edit);if(g)fillForm(g);}
+
+  if(edit){
+    const g=games.find(x=>String(x.id)===edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+
   if(del){
     const g=games.find(x=>String(x.id)===del.dataset.delete);
-    if(g){if(g.source==="starter")await hideStarter(g.id,g.name);else await deleteDatabaseItem(g.id,g.name);}
+    if(g){
+      if(g.source==="starter")await hideStarter(g.id,g.name);
+      else await deleteDatabaseItem(g.id,g.name);
+    }
   }
 });
+
 $("adminList").addEventListener("click",async e=>{
   if(!isAdmin)return;
+
   const hide=e.target.closest("[data-hide]");
   const restore=e.target.closest("[data-restore]");
   const edit=e.target.closest("[data-edit]");
   const del=e.target.closest("[data-delete]");
-  if(hide){const g=games.find(x=>x.id===hide.dataset.hide);if(g)await hideStarter(g.id,g.name);}
+
+  if(hide){
+    const g=games.find(x=>x.id===hide.dataset.hide);
+    if(g)await hideStarter(g.id,g.name);
+  }
   if(restore)await restoreStarter(restore.dataset.restore);
-  if(edit){const g=games.find(x=>String(x.id)===edit.dataset.edit);if(g)fillForm(g);}
-  if(del){const g=games.find(x=>String(x.id)===del.dataset.delete);if(g&&g.source==="database")await deleteDatabaseItem(g.id,g.name);}
+  if(edit){
+    const g=games.find(x=>String(x.id)===edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+  if(del){
+    const g=games.find(x=>String(x.id)===del.dataset.delete);
+    if(g&&g.source==="database")await deleteDatabaseItem(g.id,g.name);
+  }
 });
 
 async function loadHiddenStarters(){
   const {data,error}=await db.from("hidden_starters").select("starter_id");
-  if(error){console.error("Erro ao carregar exclusões globais:",error);hiddenLoadError=true;hiddenStarters=[];return false;}
-  hiddenStarters=(data||[]).map(row=>row.starter_id);hiddenLoadError=false;return true;
+
+  if(error){
+    console.error("Erro ao carregar exclusões globais:",error);
+    hiddenLoadError=true;
+    hiddenStarters=[];
+    return false;
+  }
+
+  hiddenStarters=(data||[]).map(row=>row.starter_id);
+  hiddenLoadError=false;
+  return true;
 }
+
 async function loadGames(){
   $("status").textContent="Carregando biblioteca...";
-  if(!db){games=starters;hiddenStarters=[];$("status").textContent="Não foi possível iniciar a conexão com o Supabase.";render();return;}
+
+  if(!db){
+    games=starters;
+    hiddenStarters=[];
+    $("status").textContent="Não foi possível iniciar a conexão com o Supabase.";
+    render();
+    return;
+  }
+
   const gamesResult=await db.from("games").select("*").order("created_at",{ascending:false});
   const hiddenOk=await loadHiddenStarters();
+
   if(gamesResult.error){
-    console.error(gamesResult.error);games=starters;
+    console.error(gamesResult.error);
+    games=starters;
     $("status").textContent="Erro ao carregar os itens cadastrados no banco.";
   }else{
     games=[...(gamesResult.data||[]).map(fromDb),...starters];
-    $("status").textContent=hiddenOk?"Biblioteca atualizada.":"Aviso: confira a tabela hidden_starters.";
+    $("status").textContent=hiddenOk
+      ?"Biblioteca atualizada."
+      :"Aviso: confira a tabela hidden_starters.";
   }
-  render();if(isAdmin)renderAdminList();
+
+  render();
+  if(isAdmin)renderAdminList();
+
   if(currentDetailId!==null){
     const current=games.find(g=>String(g.id)===String(currentDetailId));
     if(current&&!hiddenStarters.includes(current.id))openDetail(current.id);
@@ -502,9 +708,11 @@ async function loadGames(){
 
 window.addEventListener("hashchange",()=>{
   const match=location.hash.match(/^#jogo-(.+)$/);
+
   if(match){
     let id;
-    try{id=decodeURIComponent(match[1]);}catch{id=match[1];}
+    try{id=decodeURIComponent(match[1]);}
+    catch{id=match[1];}
     openDetail(id);
   }else if(currentDetailId!==null){
     backToCatalog();
@@ -513,16 +721,26 @@ window.addEventListener("hashchange",()=>{
 
 if(db){
   db.auth.getSession().then(async({data,error})=>{
-    if(error){console.error(error);return;}
+    if(error){
+      console.error(error);
+      return;
+    }
+
     const user=data.session?.user;
+
     if(user?.id===ADMIN_USER_ID){
-      isAdmin=true;$("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
-      syncUI();await loadGames();
+      isAdmin=true;
+      $("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
+      syncUI();
+      await loadGames();
     }else{
-      isAdmin=false;syncUI();if(user)await db.auth.signOut();
+      isAdmin=false;
+      syncUI();
+      if(user)await db.auth.signOut();
     }
   });
 }
+
 syncUI();
 loadGames();
 </script>
