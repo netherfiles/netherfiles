@@ -4,94 +4,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#bdbdbd">
 <title>NetherFiles — Sua biblioteca de games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080808;--panel:#111;--hover:#191919;--border:#292929;--text:#f5f5f5;--muted:#999}
+:root{
+  --bg:#bdbdbd;--panel:#dedede;--hover:#eeeeee;
+  --border:#999;--text:#111;--muted:#505050;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
-header{padding:32px 20px 24px;text-align:center;border-bottom:1px solid var(--border);background:#0b0b0b}
-.logo{font-size:clamp(28px,6vw,42px);font-weight:900;letter-spacing:5px}
-.subtitle{color:var(--muted);margin-top:9px;font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:'Orbitron',sans-serif;min-height:100vh}
+header{padding:28px 16px 22px;text-align:center;border-bottom:2px solid #111;background:#c9c9c9}
+.logo{font-size:clamp(24px,6vw,42px);font-weight:900;letter-spacing:2px;text-shadow:1px 1px 0 #777}
+.logo .nether{color:#000}
+.logo .files{color:#fff;text-shadow:1px 1px 2px #333}
+.subtitle{color:#444;margin-top:9px;font-size:11px}
 main{max-width:1200px;margin:auto;padding:24px 16px 50px}
-.search{width:100%;padding:15px 17px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white;font-size:16px;outline:none;margin-bottom:18px}
-.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px}
-button{cursor:pointer}
-.filter,.admin-btn,.action{border:1px solid var(--border);background:var(--panel);color:#ccc;padding:9px 15px;border-radius:20px;font-size:13px}
-.filter.active,.filter:hover{background:#eee;color:#111;border-color:#eee}
+.search{width:100%;padding:14px 16px;background:#eee;border:1px solid #888;border-radius:9px;color:#111;font:inherit;font-size:13px;outline:none;margin-bottom:18px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+button{cursor:pointer;font-family:inherit}
+.filter,.admin-btn,.action{border:1px solid #888;background:#ddd;color:#222;padding:9px 12px;border-radius:8px;font-size:11px}
+.filter.active,.filter:hover{background:#111;color:white;border-color:#111}
 .section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}
-.section-title{font-size:21px}
-.admin-btn{background:#eee;color:#111;border-radius:8px;font-weight:bold}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s;min-width:0}
-.card:hover{transform:translateY(-4px);border-color:#666;background:var(--hover)}
-.cover{height:155px;background:#1b1b1b;overflow:hidden}
+.section-title{font-size:18px}
+.admin-btn{background:#111;color:#fff;border-radius:7px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid #888;border-radius:10px;overflow:hidden;transition:.2s;min-width:0;box-shadow:2px 3px 0 #888}
+.card:hover{transform:translateY(-3px);background:var(--hover);border-color:#111}
+.cover{height:155px;background:#aaa;overflow:hidden}
 .cover img{width:100%;height:100%;object-fit:cover;display:block}
-.placeholder{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#252525,#101010)}
-.content{padding:15px}
-.category{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#ddd;background:#252525;border:1px solid #383838;padding:5px 8px;border-radius:5px;margin-bottom:10px}
-.card h3{font-size:17px;margin-bottom:7px}
-.platform{color:#aaa;font-size:12px;margin-bottom:10px}
-.description{color:#aaa;font-size:13px;line-height:1.5;min-height:58px;overflow-wrap:anywhere}
-.card-link{display:block;margin-top:15px;padding:11px;text-align:center;background:#eee;color:#111;text-decoration:none;border-radius:7px;font-size:13px;font-weight:bold}
-.empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:40px 10px}
-.admin-actions{display:flex;gap:8px;margin-top:10px}
-.action{flex:1;border-radius:7px}
-.edit{background:#242424;color:white}
-.delete{background:#3a1717;color:#ffb9b9}
-footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;color:#777;font-size:12px}
-.backdrop{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:10;overflow:auto}
+.placeholder{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:50px;background:linear-gradient(135deg,#ddd,#999)}
+.content{padding:14px}
+.category{display:inline-block;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#fff;background:#222;padding:5px 7px;border-radius:4px;margin-bottom:10px}
+.card h3{font-size:14px;margin-bottom:7px;overflow-wrap:anywhere}
+.platform{color:#555;font-size:10px;margin-bottom:10px}
+.description{color:#444;font-size:11px;line-height:1.7;min-height:55px;overflow-wrap:anywhere}
+.card-link{display:block;margin-top:13px;padding:11px;text-align:center;background:#111;color:#fff;text-decoration:none;border-radius:6px;font-size:11px;font-weight:bold;border:1px solid #111}
+.card-link:hover{background:#333}
+.empty{grid-column:1/-1;color:#444;text-align:center;padding:40px 10px;font-size:12px}
+.admin-actions{display:flex;gap:7px;margin-top:9px}
+.action{flex:1;border-radius:6px}
+.edit{background:#333;color:white}
+.delete{background:#5c1717;color:white}
+footer{border-top:2px solid #999;padding:24px 15px;text-align:center;color:#444;font-size:10px}
+.backdrop{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:10;overflow:auto}
 .backdrop.open{display:flex}
-.modal{width:min(100%,520px);max-height:92vh;overflow:auto;background:#111;border:1px solid #383838;border-radius:14px;padding:20px}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.modal-head h2{font-size:20px}
-.close{background:transparent;color:white;border:0;font-size:28px}
-.notice{font-size:13px;line-height:1.5;color:#bbb;margin-bottom:14px}
-.field{display:block;margin-bottom:13px}
-.field span{display:block;color:#bbb;font-size:13px;margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;background:#080808;color:#fff;border:1px solid #383838;border-radius:8px;padding:12px;font:inherit;font-size:14px}
-.field textarea{min-height:85px;resize:vertical}
-.form-buttons{display:flex;gap:10px;margin-top:16px}
-.form-buttons button{flex:1;border:0;border-radius:8px;padding:12px;font-weight:bold}
-.save{background:#eee;color:#111}
-.cancel{background:#292929;color:#fff}
+.modal{width:min(100%,540px);max-height:92vh;overflow:auto;background:#d6d6d6;border:2px solid #222;border-radius:12px;padding:19px;color:#111}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.modal-head h2{font-size:16px}
+.close{background:transparent;color:#111;border:0;font-size:28px}
+.notice{font-size:11px;line-height:1.7;color:#444;margin-bottom:14px}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;color:#333;font-size:10px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:#f3f3f3;color:#111;border:1px solid #888;border-radius:6px;padding:11px;font:inherit;font-size:11px}
+.field textarea{min-height:80px;resize:vertical}
+.form-buttons{display:flex;gap:9px;margin-top:15px}
+.form-buttons button{flex:1;border:0;border-radius:6px;padding:12px;font-weight:bold;font-size:11px}
+.save{background:#111;color:white}
+.cancel{background:#999;color:#111}
 [hidden]{display:none!important}
-#message{font-size:13px;color:#ddd;margin-top:12px;line-height:1.5}
-.admin-list{margin-top:18px;border-top:1px solid var(--border);padding-top:14px}
-.admin-list h3{font-size:15px;margin-bottom:10px}
-.admin-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #292929}
-.item-name{flex:1;min-width:0;font-size:13px;overflow-wrap:anywhere}
-.item-meta{color:#888;font-size:11px;margin-top:3px}
-.admin-item button{padding:8px 10px;font-size:12px}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cover{height:125px}.content{padding:12px}.card h3{font-size:15px}.description{font-size:12px}}
+#message{font-size:11px;color:#222;margin-top:12px;line-height:1.7}
+.admin-list{margin-top:18px;border-top:1px solid #999;padding-top:14px}
+.admin-list h3{font-size:12px;margin-bottom:10px}
+.admin-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #aaa}
+.item-name{flex:1;min-width:0;font-size:10px;overflow-wrap:anywhere}
+.item-meta{color:#555;font-size:9px;margin-top:4px}
+.admin-item button{padding:8px;font-size:9px}
+.detail{background:#d6d6d6;border:1px solid #999;border-radius:12px;overflow:hidden;box-shadow:3px 4px 0 #888}
+.detail-cover{height:250px;background:#aaa}
+.detail-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.detail-content{padding:22px}
+.detail-content h1{font-size:clamp(20px,4vw,30px);margin:9px 0}
+.detail-description{font-size:12px;line-height:1.8;color:#333;margin:14px 0}
+.detail-meta{font-size:10px;color:#444;line-height:1.8}
+.back-button{display:inline-block;margin-bottom:18px;padding:10px 14px;background:#222;color:white;border:0;border-radius:6px;font-size:11px}
+.downloads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.download-box{border:1px solid #999;background:#eee;border-radius:8px;padding:14px;min-width:0}
+.download-box h3{font-size:11px;margin-bottom:8px}
+.download-box p{font-size:10px;line-height:1.6;color:#555;margin-bottom:12px;overflow-wrap:anywhere}
+.download-button{display:block;text-decoration:none;text-align:center;padding:11px 8px;border-radius:6px;background:#111;color:white;font-size:10px;font-weight:bold}
+.no-download{font-size:10px;color:#777;padding:10px 0}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cover{height:125px}.content{padding:11px}.card h3{font-size:13px}}
+@media(max-width:440px){.downloads{grid-template-columns:1fr}.detail-cover{height:190px}}
 @media(max-width:360px){.grid{grid-template-columns:1fr}.cover{height:175px}.admin-item{flex-wrap:wrap}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">NETHERFILES</div>
+  <div class="logo"><span class="nether">Nether</span><span class="files"> Files</span></div>
   <p class="subtitle">o meu, o seu, os nossos arquivos</p>
 </header>
 
 <main>
-  <input id="search" class="search" type="search" placeholder="🔎 Pesquisar jogos, apps e ferramentas..." aria-label="Pesquisar biblioteca">
-  <div class="filters">
-    <button class="filter active" data-cat="Todos">Todos</button>
-    <button class="filter" data-cat="Jogos">Jogos</button>
-    <button class="filter" data-cat="Emuladores">Emuladores</button>
-    <button class="filter" data-cat="Ferramentas">Ferramentas</button>
-    <button class="filter" data-cat="Apps">Apps</button>
-    <button class="filter" data-cat="Mods">Mods</button>
-    <button class="filter" data-cat="Ports">Ports</button>
+  <div id="catalogPage">
+    <input id="search" class="search" type="search" placeholder="Pesquisar jogos, apps e ferramentas..." aria-label="Pesquisar biblioteca">
+    <div class="filters">
+      <button class="filter active" data-cat="Todos">Todos</button>
+      <button class="filter" data-cat="Jogos">Jogos</button>
+      <button class="filter" data-cat="Emuladores">Emuladores</button>
+      <button class="filter" data-cat="Ferramentas">Ferramentas</button>
+      <button class="filter" data-cat="Apps">Apps</button>
+      <button class="filter" data-cat="Mods">Mods</button>
+      <button class="filter" data-cat="Ports">Ports</button>
+    </div>
+    <div class="section-row">
+      <h2 class="section-title">Biblioteca</h2>
+      <button id="adminOpen" class="admin-btn" hidden>＋ Adicionar item</button>
+    </div>
+    <p id="status" class="notice">Carregando biblioteca...</p>
+    <section id="grid" class="grid"></section>
   </div>
 
-  <div class="section-row">
-    <h2 class="section-title">Biblioteca</h2>
-    <button id="adminOpen" class="admin-btn" hidden>⚙ Admin</button>
+  <div id="detailPage" hidden>
+    <button id="backToCatalog" class="back-button">← Voltar à biblioteca</button>
+    <section id="detailContent"></section>
   </div>
-
-  <p id="status" class="notice">Carregando biblioteca...</p>
-  <section id="grid" class="grid"></section>
 </main>
 
 <footer>
@@ -107,7 +136,7 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
   </div>
 
   <div id="loginArea">
-    <p class="notice">Entre com o e-mail e a senha do usuário criado em Supabase → Authentication → Users.</p>
+    <p class="notice">Entre com a conta administradora criada no Supabase.</p>
     <form id="loginForm">
       <label class="field"><span>E-mail</span><input id="email" type="email" autocomplete="username" required></label>
       <label class="field"><span>Senha</span><input id="password" type="password" autocomplete="current-password" required></label>
@@ -120,11 +149,8 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
 
   <div id="adminArea" hidden>
     <p id="signedIn" class="notice">Administrador conectado.</p>
-
     <form id="gameForm">
       <input id="itemId" type="hidden">
-      <input id="starterId" type="hidden">
-
       <label class="field"><span>Nome *</span><input id="name" required maxlength="120"></label>
       <label class="field"><span>Categoria *</span>
         <select id="category">
@@ -133,9 +159,10 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
       </label>
       <label class="field"><span>Plataforma</span><input id="platform" placeholder="Ex.: Android, PC, PS2"></label>
       <label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
-      <label class="field"><span>URL do download ou página *</span><input id="url" type="url" required placeholder="https://..."></label>
+      <label class="field"><span>Link do APK / Port / Download principal</span><input id="url" type="url" placeholder="https://..."></label>
+      <label class="field"><span>Link da ISO / Arquivo do jogo</span><input id="isoUrl" type="url" placeholder="https://..."></label>
+      <p class="notice">Você pode preencher apenas um dos links. Os botões vazios não aparecerão na página do jogo.</p>
       <label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
-
       <div class="form-buttons">
         <button id="saveItem" class="save" type="submit">Publicar item</button>
         <button id="clearForm" class="cancel" type="button">Limpar</button>
@@ -144,13 +171,11 @@ footer{border-top:1px solid var(--border);padding:24px 15px;text-align:center;co
 
     <div class="admin-list">
       <h3>Gerenciar catálogo</h3>
-      <p class="notice">Excluir um item original oculta-o para todos os visitantes. Você pode restaurá-lo quando quiser. Itens do Supabase podem ser editados e excluídos permanentemente.</p>
+      <p class="notice">Itens originais podem ser ocultados para todos e restaurados. Itens cadastrados no banco podem ser editados ou excluídos permanentemente.</p>
       <div id="adminList"></div>
     </div>
-
     <div class="form-buttons"><button id="logout" class="cancel" type="button">Sair da conta</button></div>
   </div>
-
   <p id="message" role="status"></p>
 </section>
 </div>
@@ -163,30 +188,24 @@ const ADMIN_USER_ID="9543e587-b210-4466-830d-ce187f7c39d3";
 const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
 const starters=[
-["Fuzz TV","Apps","Android","Um app de streaming completo para assistir a conteúdos de entretenimento.","📺","fuzztv.png","https://www.mediafire.com/file/eq69shm2dzrwq9z/fuzztv.apk/file"],
-["Max Payne","Jogos","PC · PlayStation 2 · Xbox","Um clássico de ação noir, com tiroteios em câmera lenta e uma história sombria.","🔫","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/header.jpg","https://store.steampowered.com/app/12140/Max_Payne/"],
-["Resident Evil 4 (2005)","Jogos","PC · PlayStation 2 · GameCube · Wii","O clássico de sobrevivência e ação de Leon S. Kennedy, lançado originalmente em 2005.","🧟","re4.png","https://www.residentevil.com/"],
-["Minecraft","Jogos","PC · Console · Mobile","Explore mundos, construa estruturas e sobreviva à sua própria aventura.","⛏️","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1672970/header.jpg","https://www.minecraft.net/"],
-["Stardew Valley","Jogos","PC · Console · Mobile","Construa sua fazenda, conheça os moradores e descubra os segredos do vale.","🌱","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg","https://www.stardewvalley.net/"],
-["PPSSPP","Emuladores","Android · PC","Emulador de PSP para jogar seus jogos compatíveis em diferentes dispositivos.","🎮","","https://www.ppsspp.org/"],
-["Dolphin Emulator","Emuladores","Android · PC","Emulador de Nintendo GameCube e Wii.","🐬","","https://dolphin-emu.org/"],
-["RetroArch","Emuladores","Android · PC · Console","Uma plataforma que reúne vários núcleos de emulação em um só lugar.","🕹️","","https://www.retroarch.com/"],
-["PCSX2","Emuladores","PC","Emulador de PlayStation 2 para computadores compatíveis.","🎮","","https://pcsx2.net/"],
-["Winlator","Ferramentas","Android","Ferramenta para executar determinados aplicativos e jogos de Windows no Android.","📱","","https://github.com/brunodev85/winlator"],
-["Godot Engine","Ferramentas","PC","Crie seus próprios jogos com este motor de desenvolvimento gratuito e de código aberto.","🛠️","","https://godotengine.org/"],
-["Blender","Ferramentas","PC","Software de criação 3D para modelagem, animação e muito mais.","🎨","","https://www.blender.org/"],
-["NetherFiles Ports","Ports","Várias plataformas","Área para reunir ports e projetos de jogos adaptados para outras plataformas.","📦","",""],
-["NetherFiles Mods","Mods","Vários jogos","Área para reunir modificações, conteúdos extras e personalizações de jogos.","🧩","",""]
+["Fuzz TV","Apps","Android","Um app de streaming completo para assistir a conteúdos de entretenimento.","📺","fuzztv.png","https://www.mediafire.com/file/eq69shm2dzrwq9z/fuzztv.apk/file",""],
+["Max Payne","Jogos","PC · PlayStation 2 · Xbox","Um clássico de ação noir, com tiroteios em câmera lenta e uma história sombria.","🔫","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/header.jpg","https://store.steampowered.com/app/12140/Max_Payne/",""],
+["Resident Evil 4 (2005)","Jogos","PC · PlayStation 2 · GameCube · Wii","O clássico de sobrevivência e ação de Leon S. Kennedy, lançado originalmente em 2005.","🧟","re4.png","https://www.residentevil.com/",""],
+["Minecraft","Jogos","PC · Console · Mobile","Explore mundos, construa estruturas e sobreviva à sua própria aventura.","⛏️","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1672970/header.jpg","https://www.minecraft.net/",""],
+["Stardew Valley","Jogos","PC · Console · Mobile","Construa sua fazenda, conheça os moradores e descubra os segredos do vale.","🌱","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg","https://www.stardewvalley.net/",""],
+["PPSSPP","Emuladores","Android · PC","Emulador de PSP para jogar seus jogos compatíveis em diferentes dispositivos.","🎮","","https://www.ppsspp.org/",""],
+["Dolphin Emulator","Emuladores","Android · PC","Emulador de Nintendo GameCube e Wii.","🐬","","https://dolphin-emu.org/",""],
+["RetroArch","Emuladores","Android · PC · Console","Uma plataforma que reúne vários núcleos de emulação em um só lugar.","🕹️","","https://www.retroarch.com/",""],
+["PCSX2","Emuladores","PC","Emulador de PlayStation 2 para computadores compatíveis.","🎮","","https://pcsx2.net/",""],
+["Winlator","Ferramentas","Android","Ferramenta para executar determinados aplicativos e jogos de Windows no Android.","📱","","https://github.com/brunodev85/winlator",""],
+["Godot Engine","Ferramentas","PC","Crie seus próprios jogos com este motor de desenvolvimento gratuito e de código aberto.","🛠️","","https://godotengine.org/",""],
+["Blender","Ferramentas","PC","Software de criação 3D para modelagem, animação e muito mais.","🎨","","https://www.blender.org/",""],
+["NetherFiles Ports","Ports","Várias plataformas","Área para reunir ports e projetos de jogos adaptados para outras plataformas.","📦","","",""],
+["NetherFiles Mods","Mods","Vários jogos","Área para reunir modificações, conteúdos extras e personalizações de jogos.","🧩","","",""]
 ].map((x,i)=>({
-  id:"starter-"+i,
-  name:x[0],
-  category:x[1],
-  platform:x[2],
-  description:x[3],
-  emoji:x[4],
-  image:x[5],
-  url:x[6],
-  source:"starter"
+  id:"starter-"+i,name:x[0],category:x[1],platform:x[2],
+  description:x[3],emoji:x[4],image:x[5],url:x[6],
+  iso_url:x[7],source:"starter"
 }));
 
 let games=[];
@@ -194,69 +213,92 @@ let activeCat="Todos";
 let isAdmin=false;
 let hiddenStarters=[];
 let hiddenLoadError=false;
-
+let currentDetailId=null;
 const $=id=>document.getElementById(id);
 
 function esc(s=""){
   return String(s).replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-
 function http(s){
   try{
     const u=new URL(s);
     return ["https:","http:"].includes(u.protocol)?u.href:"";
-  }catch{
-    return "";
-  }
+  }catch{return "";}
 }
-
 function fromDb(g){
-  return {
-    ...g,
-    platform:g.platform||"Não informado",
-    description:g.description||"",
-    image:g.image||"",
-    emoji:"🎮",
-    source:"database"
-  };
+  return {...g,platform:g.platform||"Não informado",description:g.description||"",
+    image:g.image||"",url:g.url||"",iso_url:g.iso_url||"",emoji:"🎮",source:"database"};
 }
-
+function visibleGames(){
+  return games.filter(g=>!hiddenStarters.includes(g.id));
+}
+function openDetail(id){
+  const g=games.find(x=>String(x.id)===String(id));
+  if(!g)return;
+  currentDetailId=g.id;
+  $("catalogPage").hidden=true;
+  $("detailPage").hidden=false;
+  const im=http(g.image);
+  const cover=im
+    ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" onerror="this.style.display='none'">`
+    :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+  const mainUrl=http(g.url);
+  const isoUrl=http(g.iso_url);
+  $("detailContent").innerHTML=`
+    <article class="detail">
+      <div class="detail-cover">${cover}</div>
+      <div class="detail-content">
+        <span class="category">${esc(g.category)}</span>
+        <h1>${esc(g.name)}</h1>
+        <p class="detail-meta">Plataforma: ${esc(g.platform||"Não informado")}</p>
+        <p class="detail-description">${esc(g.description||"Nenhuma descrição informada.")}</p>
+        <div class="downloads">
+          <div class="download-box">
+            <h3>📱 APK / PORT</h3>
+            <p>Aplicativo, port ou download principal.</p>
+            ${mainUrl?`<a class="download-button" href="${esc(mainUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR APK / PORT ↗</a>`:`<div class="no-download">Link ainda não adicionado.</div>`}
+          </div>
+          <div class="download-box">
+            <h3>💿 ISO / ARQUIVO</h3>
+            <p>Arquivo do jogo, ISO ou pacote adicional.</p>
+            ${isoUrl?`<a class="download-button" href="${esc(isoUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ISO / ARQUIVO ↗</a>`:`<div class="no-download">Link ainda não adicionado.</div>`}
+          </div>
+        </div>
+        ${isAdmin?`<div class="admin-actions"><button class="action edit" id="detailEdit">Editar jogo</button></div>`:""}
+      </div>
+    </article>`;
+  if(isAdmin){
+    $("detailEdit").onclick=()=>fillForm(g);
+  }
+  history.replaceState(null,"","#jogo-"+encodeURIComponent(g.id));
+  window.scrollTo(0,0);
+}
+function backToCatalog(){
+  $("detailPage").hidden=true;
+  $("catalogPage").hidden=false;
+  currentDetailId=null;
+  history.replaceState(null,"",location.pathname+location.search);
+}
+$("backToCatalog").onclick=backToCatalog;
 function render(){
   const q=$("search").value.trim().toLowerCase();
-
-  const list=games.filter(g=>
-    !hiddenStarters.includes(g.id) &&
-    [g.name,g.category,g.platform,g.description]
-      .join(" ").toLowerCase().includes(q) &&
+  const list=visibleGames().filter(g=>
+    [g.name,g.category,g.platform,g.description].join(" ").toLowerCase().includes(q)&&
     (activeCat==="Todos"||g.category===activeCat)
   );
-
   if(!list.length){
     $("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';
     return;
   }
-
   $("grid").innerHTML=list.map(g=>{
     const im=http(g.image);
-
     const cover=im
       ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">${g.emoji||"🎮"}</div>`
       :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
-
-    const link=http(g.url)
-      ?`<a class="card-link" href="${esc(http(g.url))}" target="_blank" rel="noopener noreferrer">Acessar / baixar ↗</a>`
-      :`<span class="card-link">Em breve</span>`;
-
     const actions=isAdmin
-      ?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`
-      :"";
-
+      ?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`:"";
     return `<article class="card">
       <div class="cover">${cover}</div>
       <div class="content">
@@ -264,447 +306,223 @@ function render(){
         <h3>${esc(g.name)}</h3>
         <p class="platform">${esc(g.platform||"Não informado")}</p>
         <p class="description">${esc(g.description)}</p>
-        ${link}${actions}
+        <button class="card-link" style="width:100%;border:0" data-open="${esc(g.id)}">Ver jogo e downloads ↗</button>
+        ${actions}
       </div>
     </article>`;
   }).join("");
 }
-
 function renderAdminList(){
-  if(!$("adminList"))return;
-
   const visible=games.filter(g=>!hiddenStarters.includes(g.id));
   const hidden=games.filter(g=>hiddenStarters.includes(g.id));
   const rows=[...visible,...hidden];
-
-  if(!rows.length){
-    $("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';
-    return;
-  }
-
+  if(!rows.length){$("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';return;}
   $("adminList").innerHTML=rows.map(g=>{
     const hiddenItem=hiddenStarters.includes(g.id);
     let buttons="";
-
     if(g.source==="starter"){
       buttons=hiddenItem
         ?`<button class="action edit" data-restore="${esc(g.id)}">Restaurar</button>`
-        :`<button class="action delete" data-hide="${esc(g.id)}">Excluir</button>`;
+        :`<button class="action delete" data-hide="${esc(g.id)}">Ocultar</button>`;
     }else{
       buttons=`<button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button>`;
     }
-
-    const origin=g.source==="starter"?"Original do site":"Supabase";
-    const status=hiddenItem?" · Oculto para todos os visitantes":"";
-
-    return `<div class="admin-item">
-      <div class="item-name">
-        <strong>${esc(g.name)}</strong>
-        <div class="item-meta">${esc(g.category)} · ${origin}${status}</div>
-      </div>
-      ${buttons}
-    </div>`;
+    return `<div class="admin-item"><div class="item-name"><strong>${esc(g.name)}</strong>
+      <div class="item-meta">${esc(g.category)} · ${g.source==="starter"?"Original":"Supabase"}${hiddenItem?" · Oculto":""}</div>
+      </div>${buttons}</div>`;
   }).join("");
 }
-
 function openModal(){
-  $("backdrop").classList.add("open");
-  $("message").textContent="";
-  syncUI();
+  $("backdrop").classList.add("open");$("message").textContent="";syncUI();
   if(isAdmin)renderAdminList();
 }
-
-function closeModal(){
-  $("backdrop").classList.remove("open");
-}
-
-/* BOTÃO ADMIN: VISÍVEL SOMENTE PARA O ADMIN AUTORIZADO */
+function closeModal(){$("backdrop").classList.remove("open");}
 function syncUI(){
-  $("loginArea").hidden=isAdmin;
-  $("adminArea").hidden=!isAdmin;
-  $("adminOpen").hidden=!isAdmin;
-  $("adminOpen").textContent="＋ Adicionar item";
+  $("loginArea").hidden=isAdmin;$("adminArea").hidden=!isAdmin;
+  $("adminOpen").hidden=!isAdmin;$("adminOpen").textContent="＋ Adicionar item";
 }
-
 function clearForm(){
-  $("gameForm").reset();
-  $("itemId").value="";
-  $("starterId").value="";
-  $("modalTitle").textContent="Adicionar item";
-  $("saveItem").textContent="Publicar item";
+  $("gameForm").reset();$("itemId").value="";
+  $("modalTitle").textContent="Adicionar item";$("saveItem").textContent="Publicar item";
 }
-
 function fillForm(g){
   if(g.source==="starter"){
-    $("message").textContent="Os itens originais não podem ser editados diretamente. Você pode ocultá-los para todos ou cadastrar uma versão própria.";
+    $("message").textContent="Itens originais não podem ser editados diretamente. Cadastre uma versão própria ou oculte este item.";
     return;
   }
-
-  $("itemId").value=g.id;
-  $("name").value=g.name||"";
-  $("category").value=g.category||"Apps";
-  $("platform").value=g.platform||"";
-  $("image").value=g.image||"";
-  $("url").value=g.url||"";
-  $("description").value=g.description||"";
-  $("modalTitle").textContent="Editar item";
-  $("saveItem").textContent="Salvar alterações";
+  $("itemId").value=g.id;$("name").value=g.name||"";
+  $("category").value=g.category||"Apps";$("platform").value=g.platform||"";
+  $("image").value=g.image||"";$("url").value=g.url||"";
+  $("isoUrl").value=g.iso_url||"";$("description").value=g.description||"";
+  $("modalTitle").textContent="Editar item";$("saveItem").textContent="Salvar alterações";
   openModal();
 }
-
-$("adminOpen").onclick=()=>{
-  openModal();
-  if(isAdmin)clearForm();
-};
-
-$("closeModal").onclick=closeModal;
-$("cancelLogin").onclick=closeModal;
-
-$("backdrop").addEventListener("click",e=>{
-  if(e.target===$("backdrop"))closeModal();
-});
-
+$("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
+$("closeModal").onclick=closeModal;$("cancelLogin").onclick=closeModal;
+$("backdrop").addEventListener("click",e=>{if(e.target===$("backdrop"))closeModal();});
 $("search").addEventListener("input",render);
-
-document.querySelectorAll(".filter").forEach(b=>{
-  b.addEventListener("click",()=>{
-    activeCat=b.dataset.cat;
-    document.querySelectorAll(".filter")
-      .forEach(x=>x.classList.toggle("active",x===b));
-    render();
-  });
-});
-
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+  activeCat=b.dataset.cat;
+  document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+}));
 $("clearForm").onclick=clearForm;
 
-/* LOGIN DO ADMINISTRADOR */
 $("loginForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  $("message").textContent="Entrando...";
-
-  if(!db){
-    $("message").textContent="Supabase não está disponível. Atualize a página e tente novamente.";
-    return;
-  }
-
+  e.preventDefault();$("message").textContent="Entrando...";
+  if(!db){$("message").textContent="Supabase indisponível.";return;}
   const {data,error}=await db.auth.signInWithPassword({
-    email:$("email").value.trim(),
-    password:$("password").value
+    email:$("email").value.trim(),password:$("password").value
   });
-
-  if(error){
-    $("message").textContent="Falha no login. Confira e-mail e senha.";
-    console.error(error);
-    return;
-  }
-
+  if(error){$("message").textContent="Falha no login. Confira e-mail e senha.";console.error(error);return;}
   if(data.user?.id!==ADMIN_USER_ID){
-    await db.auth.signOut();
-    isAdmin=false;
-    syncUI();
-    $("message").textContent="Esta conta não é a administradora autorizada.";
-    return;
+    await db.auth.signOut();isAdmin=false;syncUI();
+    $("message").textContent="Esta conta não é a administradora autorizada.";return;
   }
-
   isAdmin=true;
   $("signedIn").textContent="Conectado como "+(data.user.email||"administrador")+".";
-  syncUI();
-  $("message").textContent="Login realizado.";
-
+  syncUI();$("message").textContent="Login realizado.";
   await loadGames();
 });
-
-/* SAIR DA CONTA */
 $("logout").onclick=async()=>{
   if(db)await db.auth.signOut();
-
-  isAdmin=false;
-  clearForm();
-  syncUI();
-
-  $("message").textContent="Você saiu da conta.";
-  render();
+  isAdmin=false;clearForm();syncUI();$("message").textContent="Você saiu da conta.";render();
 };
 
-/* CADASTRAR E EDITAR ITENS NO SUPABASE */
 $("gameForm").addEventListener("submit",async e=>{
   e.preventDefault();
-
-  if(!db||!isAdmin){
-    $("message").textContent="Entre com a conta administradora primeiro.";
-    return;
-  }
-
+  if(!db||!isAdmin){$("message").textContent="Entre com a conta administradora primeiro.";return;}
   const id=$("itemId").value;
-
   const payload={
-    name:$("name").value.trim(),
-    category:$("category").value,
-    platform:$("platform").value.trim(),
-    image:$("image").value.trim(),
-    url:$("url").value.trim(),
+    name:$("name").value.trim(),category:$("category").value,
+    platform:$("platform").value.trim(),image:$("image").value.trim(),
+    url:$("url").value.trim(),iso_url:$("isoUrl").value.trim(),
     description:$("description").value.trim()
   };
-
-  if(!http(payload.url)){
-    $("message").textContent="O link precisa começar com http:// ou https://.";
-    return;
+  if(!payload.url&&!payload.iso_url){
+    $("message").textContent="Preencha pelo menos um link de download.";return;
   }
-
+  if(payload.url&&!http(payload.url)){
+    $("message").textContent="O link principal precisa começar com http:// ou https://.";return;
+  }
+  if(payload.iso_url&&!http(payload.iso_url)){
+    $("message").textContent="O link da ISO precisa começar com http:// ou https://.";return;
+  }
   if(payload.image&&!http(payload.image)){
-    $("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";
-    return;
+    $("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";return;
   }
-
   $("message").textContent="Salvando...";
-
   const result=id
     ?await db.from("games").update(payload).eq("id",id).select().single()
     :await db.from("games").insert(payload).select().single();
-
   if(result.error){
     console.error(result.error);
-    $("message").textContent="Erro ao salvar. Verifique as políticas RLS e as colunas da tabela.";
+    $("message").textContent="Erro ao salvar. Confirme a coluna iso_url e as políticas RLS.";
     return;
   }
-
   $("message").textContent="Item salvo!";
-  clearForm();
-  await loadGames();
+  clearForm();await loadGames();
 });
 
-/* EXCLUIR ITEM CADASTRADO NO BANCO */
 async function deleteDatabaseItem(id,name){
   if(!isAdmin||!db)return;
-  if(!confirm(`Tem certeza que deseja excluir "${name}" permanentemente do banco?`))return;
-
+  if(!confirm(`Excluir "${name}" permanentemente do banco?`))return;
   const {error}=await db.from("games").delete().eq("id",id);
-
-  if(error){
-    alert("Falha ao excluir. Confira as políticas RLS.");
-    console.error(error);
-    return;
-  }
-
-  await loadGames();
-  renderAdminList();
-  $("message").textContent="Item excluído do Supabase para todos os visitantes.";
+  if(error){alert("Falha ao excluir. Confira as políticas RLS.");console.error(error);return;}
+  await loadGames();renderAdminList();$("message").textContent="Item excluído para todos.";
 }
-
-/* OCULTAR ITEM ORIGINAL GLOBALMENTE */
 async function hideStarter(id,name){
-  if(!db||!isAdmin){
-    $("message").textContent="Entre com a conta administradora primeiro.";
-    return;
-  }
-
-  if(hiddenLoadError){
-    $("message").textContent="Não foi possível confirmar as exclusões globais. Verifique a tabela hidden_starters.";
-    return;
-  }
-
-  if(hiddenStarters.includes(id)){
-    $("message").textContent="Este item já está oculto.";
-    return;
-  }
-
-  if(!confirm(`Remover "${name}" do catálogo para TODOS os visitantes?`))return;
-
-  $("message").textContent="Removendo item para todos...";
-
-  const {error}=await db
-    .from("hidden_starters")
-    .insert({starter_id:id});
-
-  if(error){
-    console.error(error);
-    $("message").textContent="Não foi possível ocultar o item globalmente. Confira a tabela e as políticas RLS.";
-    return;
-  }
-
-  hiddenStarters.push(id);
-
-  render();
-  renderAdminList();
-
-  $("message").textContent="Item removido para todos os visitantes!";
+  if(!db||!isAdmin)return;
+  if(hiddenLoadError){$("message").textContent="Não foi possível confirmar as exclusões globais. Verifique hidden_starters.";return;}
+  if(hiddenStarters.includes(id))return;
+  if(!confirm(`Ocultar "${name}" para TODOS os visitantes?`))return;
+  const {error}=await db.from("hidden_starters").insert({starter_id:id});
+  if(error){console.error(error);$("message").textContent="Falha ao ocultar. Confira a tabela hidden_starters e as políticas RLS.";return;}
+  hiddenStarters.push(id);render();renderAdminList();$("message").textContent="Item ocultado para todos!";
 }
-
-/* RESTAURAR ITEM ORIGINAL GLOBALMENTE */
 async function restoreStarter(id){
-  if(!db||!isAdmin){
-    $("message").textContent="Entre com a conta administradora primeiro.";
-    return;
-  }
-
-  if(hiddenLoadError){
-    $("message").textContent="Não foi possível confirmar as exclusões globais. Verifique a tabela hidden_starters.";
-    return;
-  }
-
+  if(!db||!isAdmin)return;
+  if(hiddenLoadError){$("message").textContent="Não foi possível confirmar as exclusões globais.";return;}
   const item=starters.find(g=>g.id===id);
-
   if(!confirm(`Restaurar "${item?.name||id}" para todos os visitantes?`))return;
-
-  $("message").textContent="Restaurando item...";
-
-  const {error}=await db
-    .from("hidden_starters")
-    .delete()
-    .eq("starter_id",id);
-
-  if(error){
-    console.error(error);
-    $("message").textContent="Não foi possível restaurar o item. Confira as políticas RLS.";
-    return;
-  }
-
+  const {error}=await db.from("hidden_starters").delete().eq("starter_id",id);
+  if(error){console.error(error);$("message").textContent="Falha ao restaurar.";return;}
   hiddenStarters=hiddenStarters.filter(x=>x!==id);
-
-  render();
-  renderAdminList();
-
-  $("message").textContent="Item restaurado para todos os visitantes!";
+  render();renderAdminList();$("message").textContent="Item restaurado para todos!";
 }
 
-/* BOTÕES DOS CARDS */
 $("grid").addEventListener("click",async e=>{
+  const open=e.target.closest("[data-open]");
+  if(open){openDetail(open.dataset.open);return;}
   if(!isAdmin)return;
-
   const edit=e.target.closest("[data-edit]");
   const del=e.target.closest("[data-delete]");
-
-  if(edit){
-    const g=games.find(x=>String(x.id)===edit.dataset.edit);
-    if(g)fillForm(g);
-  }
-
+  if(edit){const g=games.find(x=>String(x.id)===edit.dataset.edit);if(g)fillForm(g);}
   if(del){
     const g=games.find(x=>String(x.id)===del.dataset.delete);
-    if(!g)return;
-
-    if(g.source==="starter"){
-      await hideStarter(g.id,g.name);
-    }else{
-      await deleteDatabaseItem(g.id,g.name);
-    }
+    if(g){if(g.source==="starter")await hideStarter(g.id,g.name);else await deleteDatabaseItem(g.id,g.name);}
   }
 });
-
-/* BOTÕES DA LISTA ADMINISTRATIVA */
 $("adminList").addEventListener("click",async e=>{
   if(!isAdmin)return;
-
   const hide=e.target.closest("[data-hide]");
   const restore=e.target.closest("[data-restore]");
   const edit=e.target.closest("[data-edit]");
   const del=e.target.closest("[data-delete]");
-
-  if(hide){
-    const g=games.find(x=>x.id===hide.dataset.hide);
-    if(g)await hideStarter(g.id,g.name);
-  }
-
-  if(restore){
-    await restoreStarter(restore.dataset.restore);
-  }
-
-  if(edit){
-    const g=games.find(x=>String(x.id)===edit.dataset.edit);
-    if(g)fillForm(g);
-  }
-
-  if(del){
-    const g=games.find(x=>String(x.id)===del.dataset.delete);
-    if(g&&g.source==="database"){
-      await deleteDatabaseItem(g.id,g.name);
-    }
-  }
+  if(hide){const g=games.find(x=>x.id===hide.dataset.hide);if(g)await hideStarter(g.id,g.name);}
+  if(restore)await restoreStarter(restore.dataset.restore);
+  if(edit){const g=games.find(x=>String(x.id)===edit.dataset.edit);if(g)fillForm(g);}
+  if(del){const g=games.find(x=>String(x.id)===del.dataset.delete);if(g&&g.source==="database")await deleteDatabaseItem(g.id,g.name);}
 });
 
-/* CARREGAR EXCLUSÕES GLOBAIS DO SUPABASE */
 async function loadHiddenStarters(){
-  const {data,error}=await db
-    .from("hidden_starters")
-    .select("starter_id");
-
-  if(error){
-    console.error("Erro ao carregar exclusões globais:",error);
-    hiddenLoadError=true;
-    hiddenStarters=[];
-    return false;
-  }
-
-  hiddenStarters=(data||[]).map(row=>row.starter_id);
-  hiddenLoadError=false;
-  return true;
+  const {data,error}=await db.from("hidden_starters").select("starter_id");
+  if(error){console.error("Erro ao carregar exclusões globais:",error);hiddenLoadError=true;hiddenStarters=[];return false;}
+  hiddenStarters=(data||[]).map(row=>row.starter_id);hiddenLoadError=false;return true;
 }
-
-/* CARREGAR BIBLIOTECA E EXCLUSÕES */
 async function loadGames(){
   $("status").textContent="Carregando biblioteca...";
-
-  if(!db){
-    games=starters;
-    hiddenStarters=[];
-    $("status").textContent="Não foi possível iniciar a conexão com o Supabase.";
-    render();
-    return;
-  }
-
-  const gamesResult=await db
-    .from("games")
-    .select("*")
-    .order("created_at",{ascending:false});
-
+  if(!db){games=starters;hiddenStarters=[];$("status").textContent="Não foi possível iniciar a conexão com o Supabase.";render();return;}
+  const gamesResult=await db.from("games").select("*").order("created_at",{ascending:false});
   const hiddenOk=await loadHiddenStarters();
-
   if(gamesResult.error){
-    console.error(gamesResult.error);
-    games=starters;
+    console.error(gamesResult.error);games=starters;
     $("status").textContent="Erro ao carregar os itens cadastrados no banco.";
   }else{
     games=[...(gamesResult.data||[]).map(fromDb),...starters];
-
-    if(!hiddenOk){
-      $("status").textContent="Aviso: não foi possível carregar as exclusões globais. Execute e confira o SQL da tabela hidden_starters.";
-    }else{
-      $("status").textContent="Biblioteca atualizada.";
-    }
+    $("status").textContent=hiddenOk?"Biblioteca atualizada.":"Aviso: confira a tabela hidden_starters.";
   }
-
-  render();
-
-  if(isAdmin)renderAdminList();
+  render();if(isAdmin)renderAdminList();
+  if(currentDetailId!==null){
+    const current=games.find(g=>String(g.id)===String(currentDetailId));
+    if(current&&!hiddenStarters.includes(current.id))openDetail(current.id);
+    else backToCatalog();
+  }
 }
 
-/* RECUPERAR SESSÃO E VALIDAR ADMINISTRADOR */
+window.addEventListener("hashchange",()=>{
+  const match=location.hash.match(/^#jogo-(.+)$/);
+  if(match){
+    let id;
+    try{id=decodeURIComponent(match[1]);}catch{id=match[1];}
+    openDetail(id);
+  }else if(currentDetailId!==null){
+    backToCatalog();
+  }
+});
+
 if(db){
   db.auth.getSession().then(async({data,error})=>{
-    if(error){
-      console.error(error);
-      return;
-    }
-
+    if(error){console.error(error);return;}
     const user=data.session?.user;
-
     if(user?.id===ADMIN_USER_ID){
-      isAdmin=true;
-      $("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
-      syncUI();
-      await loadGames();
+      isAdmin=true;$("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
+      syncUI();await loadGames();
     }else{
-      isAdmin=false;
-      syncUI();
-
-      if(user){
-        await db.auth.signOut();
-      }
+      isAdmin=false;syncUI();if(user)await db.auth.signOut();
     }
   });
 }
-
-/* ESTADO INICIAL: BOTÃO ADMIN ESCONDIDO */
 syncUI();
 loadGames();
 </script>
