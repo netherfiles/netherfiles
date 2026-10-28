@@ -10,10 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#bdbdbd;--panel:#dedede;--hover:#eeeeee;
-  --border:#999;--text:#111;--muted:#505050;
-}
+:root{--bg:#bdbdbd;--panel:#dedede;--hover:#eeeeee;--border:#999;--text:#111;--muted:#505050}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Orbitron',sans-serif;min-height:100vh}
 header{padding:28px 16px 22px;text-align:center;border-bottom:2px solid #111;background:#c9c9c9}
@@ -159,9 +156,9 @@ footer{border-top:2px solid #999;padding:24px 15px;text-align:center;color:#444;
       </label>
       <label class="field"><span>Plataforma</span><input id="platform" placeholder="Ex.: Android, PC, PS2"></label>
       <label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
-      <label class="field"><span>Link do APK / Port / Download principal</span><input id="url" type="url" placeholder="https://..."></label>
-      <label class="field"><span>Link da ISO / Arquivo do jogo</span><input id="isoUrl" type="url" placeholder="https://..."></label>
-      <p class="notice">Você pode preencher apenas um dos links. Os botões vazios não aparecerão na página do jogo.</p>
+      <label class="field"><span>Link principal (APK / Port / download)</span><input id="url" type="url" placeholder="https://..."></label>
+      <label class="field"><span>Link da ISO</span><input id="isoUrl" type="url" placeholder="https://..."></label>
+      <p class="notice">Jogos e Ports podem ter um link principal e uma ISO. Apps, emuladores e ferramentas não exibem o botão de ISO. Você pode preencher apenas um link.</p>
       <label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
       <div class="form-buttons">
         <button id="saveItem" class="save" type="submit">Publicar item</button>
@@ -235,9 +232,9 @@ function visibleGames(){
   return games.filter(g=>!hiddenStarters.includes(g.id));
 }
 
-/* PÁGINA DE DETALHES:
-   A ISO só aparece para itens da categoria Jogos
-   e somente se houver um link de ISO cadastrado. */
+/* DETALHES:
+   Jogos e Ports podem mostrar ISO se houver link cadastrado.
+   Apps, emuladores, ferramentas e mods não mostram botão de ISO. */
 function openDetail(id){
   const g=games.find(x=>String(x.id)===String(id));
   if(!g)return;
@@ -253,29 +250,29 @@ function openDetail(id){
 
   const mainUrl=http(g.url);
   const isoUrl=http(g.iso_url);
-  const isGame=g.category==="Jogos";
+  const supportsIso=["Jogos","Ports"].includes(g.category);
 
-  const apkBox=mainUrl?`
+  const mainBox=mainUrl?`
     <div class="download-box">
-      <h3>📱 APK / PORT</h3>
+      <h3>📦 DOWNLOAD PRINCIPAL</h3>
       <p>Aplicativo, port ou download principal.</p>
       <a class="download-button" href="${esc(mainUrl)}"
          target="_blank" rel="noopener noreferrer">
-        BAIXAR APK / PORT ↗
+        BAIXAR ↗
       </a>
     </div>`:"";
 
-  const isoBox=isGame&&isoUrl?`
+  const isoBox=supportsIso&&isoUrl?`
     <div class="download-box">
-      <h3>💿 ISO / ARQUIVO</h3>
-      <p>Arquivo do jogo ou ISO.</p>
+      <h3>💿 ISO</h3>
+      <p>Arquivo ISO do jogo.</p>
       <a class="download-button" href="${esc(isoUrl)}"
          target="_blank" rel="noopener noreferrer">
-        BAIXAR ISO / ARQUIVO ↗
+        BAIXAR ISO ↗
       </a>
     </div>`:"";
 
-  const downloadCount=(apkBox?1:0)+(isoBox?1:0);
+  const downloadCount=(mainBox?1:0)+(isoBox?1:0);
 
   $("detailContent").innerHTML=`
     <article class="detail">
@@ -291,10 +288,9 @@ function openDetail(id){
         </p>
 
         <div class="downloads" style="${
-          downloadCount===1 ? "grid-template-columns:1fr;" :
-          downloadCount===0 ? "grid-template-columns:1fr;" : ""
+          downloadCount<=1 ? "grid-template-columns:1fr;" : ""
         }">
-          ${apkBox}
+          ${mainBox}
           ${isoBox}
           ${downloadCount===0
             ? '<p class="no-download">Nenhum download disponível no momento.</p>'
@@ -302,7 +298,7 @@ function openDetail(id){
         </div>
 
         ${isAdmin
-          ? '<div class="admin-actions"><button class="action edit" id="detailEdit">Editar jogo</button></div>'
+          ? '<div class="admin-actions"><button class="action edit" id="detailEdit">Editar item</button></div>'
           : ''}
       </div>
     </article>`;
