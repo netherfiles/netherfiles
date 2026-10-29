@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -85,7 +86,7 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
 .close{background:transparent;color:var(--text);border:0;font-size:28px}
 .notice{font-size:12px;line-height:1.65;color:var(--muted);margin-bottom:14px}
 .field{display:block;margin-bottom:13px}
-.field span{display:block;color:#c4d0c8;font-size:12px;margin-bottom:7px}
+.field>span{display:block;color:#c4d0c8;font-size:12px;margin-bottom:7px}
 .field input,.field select,.field textarea{width:100%;background:#1a2820;color:var(--text);border:1px solid #34473b;border-radius:9px;padding:12px;font-size:13px}
 .field textarea{min-height:85px;resize:vertical}
 .form-buttons{display:flex;gap:9px;margin-top:15px}
@@ -105,6 +106,10 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
 .part-field{border:1px solid var(--border);padding:12px;border-radius:10px;margin-bottom:10px}
 .part-field .field{margin-bottom:0}
 .part-field .field span{font-weight:700}
+.emulator-options{display:grid;gap:10px;background:#1a2820;border:1px solid #34473b;border-radius:9px;padding:13px}
+.emulator-option{display:flex;align-items:center;gap:10px;color:var(--text);font-size:13px;cursor:pointer}
+.emulator-option input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--accent)}
+.emulator-help{display:block;color:var(--muted);margin-top:7px;font-size:11px;line-height:1.5}
 
 .detail{background:var(--panel);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .detail-cover{height:280px;background:#1c2b22}
@@ -176,11 +181,7 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
 </header>
 
 <section class="hero-logo">
-  <img
-    src="https://netherfiles.github.io/netherfiles/file_0000000031e4820eacf14cad738f0f7b.png"
-    alt="NetherFiles"
-    loading="eager"
-  >
+  <img src="https://netherfiles.github.io/netherfiles/file_0000000031e4820eacf14cad738f0f7b.png" alt="NetherFiles" loading="eager">
 </section>
 
 <main>
@@ -279,13 +280,24 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
         <hr class="form-divider">
         <h3 class="form-subtitle">Configuração da ROM</h3>
 
-        <label class="field"><span>Emulador recomendado *</span>
-          <select id="emulator">
-            <option value="Winlator">Winlator</option>
-            <option value="GameHub">GameHub</option>
-            <option value="NetherSX2">NetherSX2</option>
-          </select>
-        </label>
+        <div class="field">
+          <span>Emuladores compatíveis *</span>
+          <div id="emulatorOptions" class="emulator-options">
+            <label class="emulator-option" data-emulator-label="Winlator">
+              <input type="checkbox" name="emulatorOption" value="Winlator">
+              <span>Winlator</span>
+            </label>
+            <label class="emulator-option" data-emulator-label="GameHub">
+              <input type="checkbox" name="emulatorOption" value="GameHub">
+              <span>GameHub</span>
+            </label>
+            <label class="emulator-option" data-emulator-label="NetherSX2">
+              <input type="checkbox" name="emulatorOption" value="NetherSX2">
+              <span>NetherSX2</span>
+            </label>
+          </div>
+          <small id="emulatorHelp" class="emulator-help">Selecione os emuladores compatíveis.</small>
+        </div>
 
         <label class="field"><span>Formato do arquivo</span>
           <input id="fileType" maxlength="40" placeholder="Ex.: ISO, CHD, ZIP, EXE, BIN">
@@ -298,9 +310,7 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
           </select>
         </label>
 
-        <p id="fileModeInfo" class="file-mode-info">
-          Um único botão de download será exibido na página do jogo.
-        </p>
+        <p id="fileModeInfo" class="file-mode-info">Um único botão de download será exibido na página do jogo.</p>
 
         <div id="singleFileField" class="part-field">
           <label class="field">
@@ -420,6 +430,7 @@ function fromDbRom(r){
     platform:r.platform||"Não informado",
     description:r.description||"",
     image:r.image||"",
+    emulator:r.emulator||"",
     emoji:"🎮",
     source:"rom",
     isRom:true
@@ -434,16 +445,62 @@ function findItem(id){
   return games.find(x=>String(x.id)===String(id));
 }
 
+/* Seleção múltipla de emuladores */
+function getSelectedEmulators(){
+  return [...document.querySelectorAll('input[name="emulatorOption"]:checked')]
+    .map(input=>input.value);
+}
+
+function setSelectedEmulators(values){
+  let selected;
+
+  if(Array.isArray(values)){
+    selected=values;
+  }else{
+    selected=String(values||"")
+      .split(",")
+      .map(x=>x.trim())
+      .filter(Boolean);
+  }
+
+  document.querySelectorAll('input[name="emulatorOption"]').forEach(input=>{
+    input.checked=selected.includes(input.value);
+  });
+}
+
 function toggleRomFields(){
-  const isRom=["ROMs (PC)","ROMs (PS2)"].includes($("category").value);
+  const category=$("category").value;
+  const isRom=["ROMs (PC)","ROMs (PS2)"].includes(category);
+
   $("romFields").hidden=!isRom;
   $("normalFields").hidden=isRom;
 
-  if($("category").value==="ROMs (PC)"){
-    $("emulator").value=["Winlator","GameHub"].includes($("emulator").value)?$("emulator").value:"Winlator";
-  }else if($("category").value==="ROMs (PS2)"){
-    $("emulator").value="NetherSX2";
+  const options=[...document.querySelectorAll('input[name="emulatorOption"]')];
+
+  options.forEach(input=>{
+    const allowed=category==="ROMs (PS2)"
+      ?input.value==="NetherSX2"
+      :category==="ROMs (PC)"
+        ?["Winlator","GameHub"].includes(input.value)
+        :true;
+
+    input.parentElement.hidden=!allowed;
+
+    if(!allowed)input.checked=false;
+  });
+
+  if(category==="ROMs (PS2)"){
+    setSelectedEmulators(["NetherSX2"]);
+  }else if(category==="ROMs (PC)"){
+    const selected=getSelectedEmulators().filter(x=>["Winlator","GameHub"].includes(x));
+    if(selected.includes("NetherSX2"))setSelectedEmulators([]);
   }
+
+  $("emulatorHelp").textContent=category==="ROMs (PC)"
+    ?"Marque Winlator, GameHub ou os dois."
+    :category==="ROMs (PS2)"
+      ?"Para PS2, o emulador é NetherSX2."
+      :"Você pode selecionar mais de um emulador.";
 }
 
 function toggleFileMode(){
@@ -519,7 +576,7 @@ function openDetail(id){
   }
 
   const metaRom=g.isRom
-    ?`<p class="detail-meta">Emulador: ${esc(g.emulator||"Não informado")}<br>Formato: ${esc(g.file_type||"Não informado")}</p>`
+    ?`<p class="detail-meta">Emuladores compatíveis: ${esc(g.emulator||"Não informado")}<br>Formato: ${esc(g.file_type||"Não informado")}</p>`
     :"";
 
   $("detailContent").innerHTML=`
@@ -650,6 +707,7 @@ function clearForm(){
   $("saveItem").textContent="Publicar item";
   $("category").value="Jogos";
   $("downloadMode").value="single";
+  setSelectedEmulators([]);
   toggleRomFields();
   toggleFileMode();
 }
@@ -671,7 +729,7 @@ function fillForm(g){
   $("description").value=g.description||"";
 
   if(g.isRom){
-    $("emulator").value=g.emulator||"Winlator";
+    setSelectedEmulators(g.emulator||"Winlator");
     $("fileType").value=g.file_type||"";
     $("downloadMode").value=g.download_mode||"single";
     $("file1").value=g.file1||"";
@@ -686,6 +744,11 @@ function fillForm(g){
   }
 
   toggleRomFields();
+
+  if(g.isRom){
+    setSelectedEmulators(g.emulator||"Winlator");
+  }
+
   toggleFileMode();
 
   $("modalTitle").textContent=g.isRom?"Editar ROM":"Editar item";
@@ -697,9 +760,11 @@ $("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
 $("adminGear").onclick=openModal;
 $("closeModal").onclick=closeModal;
 $("cancelLogin").onclick=closeModal;
+
 $("backdrop").addEventListener("click",e=>{
   if(e.target===$("backdrop"))closeModal();
 });
+
 $("search").addEventListener("input",render);
 
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
@@ -792,16 +857,23 @@ $("gameForm").addEventListener("submit",async e=>{
     table="roms";
 
     const mode=$("downloadMode").value;
-    const emulator=$("emulator").value;
+    const selectedEmulators=getSelectedEmulators();
 
-    if(category==="ROMs (PS2)"&&emulator!=="NetherSX2"){
-      $("message").textContent="Para ROMs (PS2), selecione NetherSX2.";
-      return;
+    if(category==="ROMs (PS2)"){
+      if(selectedEmulators.length!==1||selectedEmulators[0]!=="NetherSX2"){
+        $("message").textContent="Para ROMs (PS2), selecione NetherSX2.";
+        return;
+      }
     }
 
-    if(category==="ROMs (PC)"&&!["Winlator","GameHub"].includes(emulator)){
-      $("message").textContent="Para ROMs (PC), selecione Winlator ou GameHub.";
-      return;
+    if(category==="ROMs (PC)"){
+      if(
+        selectedEmulators.length===0||
+        selectedEmulators.some(x=>!["Winlator","GameHub"].includes(x))
+      ){
+        $("message").textContent="Selecione Winlator, GameHub ou os dois.";
+        return;
+      }
     }
 
     const f1=$("file1").value.trim();
@@ -823,12 +895,14 @@ $("gameForm").addEventListener("submit",async e=>{
       }
 
       const parts=[f2,f3,f4,f5,f6].filter(Boolean);
+
       if(parts.some(url=>!http(url))){
         $("message").textContent="Todos os links preenchidos precisam começar com http:// ou https://.";
         return;
       }
 
       let foundEmpty=false;
+
       for(const part of [f2,f3,f4,f5,f6]){
         if(!part)foundEmpty=true;
         else if(foundEmpty){
@@ -840,7 +914,7 @@ $("gameForm").addEventListener("submit",async e=>{
 
     payload={
       ...common,
-      emulator,
+      emulator:selectedEmulators.join(", "),
       file_type:$("fileType").value.trim(),
       download_mode:mode,
       file1:mode==="single"?f1:null,
@@ -1051,13 +1125,8 @@ async function loadGames(){
     loadHiddenStarters()
   ]);
 
-  if(gamesResult.error){
-    console.error("Erro ao carregar games:",gamesResult.error);
-  }
-
-  if(romsResult.error){
-    console.error("Erro ao carregar ROMs:",romsResult.error);
-  }
+  if(gamesResult.error)console.error("Erro ao carregar games:",gamesResult.error);
+  if(romsResult.error)console.error("Erro ao carregar ROMs:",romsResult.error);
 
   const regularItems=gamesResult.error?[]:(gamesResult.data||[]).map(fromDb);
   const romItems=romsResult.error?[]:(romsResult.data||[]).map(fromDbRom);
