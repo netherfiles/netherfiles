@@ -1,43 +1,1323 @@
-"O painel terá:
-Visitas totais.
-Downloads totais.
-Jogos cadastrados.
-Emuladores cadastrados.
-Outros conteúdos.
-Atualização das estatísticas ao abrir o painel." Vc falou q o painel teria isso e me fez colar isso no sql editor
--- Estatísticas do NetherFiles
-create table if not exists public.site_analytics (
-id bigint generated always as identity primary key,
-event_type text not null
-check (event_type in ('visit', 'download')),
-item_id text,
-created_at timestamptz not null default now()
-);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101713">
+<title>NetherFiles — Sua biblioteca de games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
--- Índices para consultas rápidas
-create index if not exists site_analytics_event_idx
-on public.site_analytics (event_type);
+<style>
+:root {
+  --bg:#090e0c;
+  --panel:#101a16;
+  --panel2:#14211b;
+  --hover:#1b2b23;
+  --border:#293a32;
+  --text:#f4f7f5;
+  --muted:#9baaa2;
+  --accent:#00a878;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Roboto,Arial,sans-serif;min-height:100vh}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
 
-create index if not exists site_analytics_created_idx
-on public.site_analytics (created_at);
+header{position:sticky;top:0;z-index:5;padding:15px 18px;background:#101713;border-bottom:1px solid var(--border)}
+.header-inner{max-width:1120px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;background:#14221b;border:1px solid #263d31;border-radius:9px;font-size:25px}
+.logo{font-size:clamp(20px,4vw,28px);font-weight:800;letter-spacing:-.8px;white-space:nowrap}
+.logo .nether{color:#f4f7f5}
+.logo .files{color:#00c98a}
+.subtitle{color:var(--muted);margin-top:4px;font-size:12px}
+.header-actions{display:flex;align-items:center;gap:8px}
+.admin-btn,.header-icon,.action{border:1px solid var(--border);background:#17231d;color:var(--text);padding:10px 13px;border-radius:9px;font-size:12px;font-weight:700}
+.admin-btn{background:var(--accent);border-color:var(--accent);color:#06150f}
+.header-icon{width:42px;height:42px;padding:0;font-size:18px}
 
--- Ativar proteção RLS
-alter table public.site_analytics enable row level security;
+.hero-logo{width:100%;display:flex;justify-content:center;align-items:center;padding:16px 12px 24px;background:var(--bg)}
+.hero-logo img{display:block;width:min(100%,680px);height:auto;object-fit:contain;border-radius:12px}
 
--- Visitantes podem registrar eventos
-create policy "Public can register analytics"
-on public.site_analytics
-for insert
-to anon, authenticated
-with check (
-event_type in ('visit', 'download')
-);
+main{max-width:1120px;margin:auto;padding:28px 16px 44px}
+.catalog-panel{border:1px solid var(--border);border-radius:22px;background:var(--panel);overflow:hidden}
+.catalog-intro{padding:26px 26px 24px;border-bottom:1px solid var(--border)}
+.intro-title{font-size:clamp(23px,4.5vw,34px);font-weight:800;line-height:1.3;letter-spacing:-.6px;margin-bottom:8px}
+.intro-copy{font-size:15px;line-height:1.55;color:var(--muted);margin-bottom:22px}
+.search-wrap{position:relative;margin-bottom:14px}
+.search-icon{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--muted);pointer-events:none}
+.search{width:100%;padding:17px 16px 17px 48px;background:#1a2620;border:1px solid #2b3a32;border-radius:17px;color:var(--text);font-size:15px;outline:none}
+.search:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.filter{border:1px solid var(--border);background:#19251f;color:#dce5df;padding:10px 14px;border-radius:11px;font-size:12px;font-weight:600}
+.filter.active,.filter:hover{background:var(--accent);color:#06150f;border-color:var(--accent)}
+.section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:23px 26px 16px}
+.section-title{font-size:18px;font-weight:800}
+.results-label{color:var(--muted);font-size:12px}
+.game-list{display:flex;flex-direction:column}
+.game-row{display:flex;align-items:center;gap:16px;padding:18px 26px;border-top:1px solid var(--border);transition:background .18s;min-width:0}
+.game-row:hover{background:var(--hover)}
+.row-cover{width:76px;height:76px;flex:0 0 76px;border-radius:15px;overflow:hidden;background:#1e3026;border:1px solid #2d4336}
+.row-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:31px;background:linear-gradient(135deg,#23382c,#122018)}
+.row-main{flex:1;min-width:0}
+.row-main h3{font-size:16px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;margin-bottom:6px}
+.row-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px;line-height:1.4}
+.category{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#baf5df;background:#153d2d;padding:5px 8px;border-radius:6px;font-weight:700}
+.row-description{font-size:12px;line-height:1.5;color:var(--muted);margin-top:7px;overflow-wrap:anywhere}
+.row-arrow{flex:0 0 auto;color:#9db0a5;font-size:24px;padding-left:4px}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:14px}
+.admin-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.action{padding:8px 10px;border-radius:7px;font-size:11px}
+.edit{background:#214b38;color:#e8fff3;border-color:#32634c}
+.delete{background:#4b2424;color:#fff;border-color:#713737}
 
--- Somente o administrador autorizado pode consultar
-create policy "Admin can read analytics"
-on public.site_analytics
-for select
-to authenticated
-using (
-auth.uid() = '9543e587-b210-4466-830d-ce187f7c39d3'::uuid
-);
+footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}
+
+.backdrop{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:10;overflow:auto}
+.backdrop.open{display:flex}
+.modal{width:min(100%,600px);max-height:92vh;overflow:auto;background:#111d17;border:1px solid #385143;border-radius:16px;padding:20px;color:var(--text)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.modal-head h2{font-size:18px}
+.close{background:transparent;color:var(--text);border:0;font-size:28px}
+.notice{font-size:12px;line-height:1.65;color:var(--muted);margin-bottom:14px}
+.field{display:block;margin-bottom:13px}
+.field>span{display:block;color:#c4d0c8;font-size:12px;margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;background:#1a2820;color:var(--text);border:1px solid #34473b;border-radius:9px;padding:12px;font-size:13px}
+.field textarea{min-height:85px;resize:vertical}
+.form-buttons{display:flex;gap:9px;margin-top:15px}
+.form-buttons button{flex:1;border:0;border-radius:8px;padding:12px;font-weight:700;font-size:12px}
+.save{background:var(--accent);color:#06150f}
+.cancel{background:#29372f;color:var(--text)}
+#message{font-size:12px;color:#baf5df;margin-top:12px;line-height:1.7}
+.admin-list{margin-top:18px;border-top:1px solid var(--border);padding-top:14px}
+.admin-list h3{font-size:13px;margin-bottom:10px}
+.admin-item{display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--border)}
+.item-name{flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere}
+.item-meta{color:var(--muted);font-size:10px;margin-top:4px}
+.admin-item button{padding:8px;font-size:10px}
+.form-divider{border:0;border-top:1px solid var(--border);margin:18px 0}
+.form-subtitle{font-size:14px;font-weight:800;margin-bottom:12px}
+.file-mode-info{font-size:11px;color:var(--muted);line-height:1.6;margin:-3px 0 12px}
+.part-field{border:1px solid var(--border);padding:12px;border-radius:10px;margin-bottom:10px}
+.part-field .field{margin-bottom:0}
+.part-field .field span{font-weight:700}
+.emulator-options{display:grid;gap:10px;background:#1a2820;border:1px solid #34473b;border-radius:9px;padding:13px}
+.emulator-option{display:flex;align-items:center;gap:10px;color:var(--text);font-size:13px;cursor:pointer}
+.emulator-option input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--accent)}
+.emulator-help{display:block;color:var(--muted);margin-top:7px;font-size:11px;line-height:1.5}
+
+.detail{background:var(--panel);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.detail-cover{height:280px;background:#1c2b22}
+.detail-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.detail-content{padding:24px}
+.detail-content h1{font-size:clamp(23px,4vw,32px);font-weight:800;line-height:1.25;margin:10px 0}
+.detail-description{font-size:14px;line-height:1.75;color:#c0ccc4;margin:15px 0}
+.detail-meta{font-size:12px;color:var(--muted);line-height:1.8}
+.back-button{display:inline-block;margin-bottom:17px;padding:11px 14px;background:#1a2820;color:white;border:1px solid var(--border);border-radius:9px;font-size:12px;font-weight:700}
+.downloads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:22px}
+.download-box{border:1px solid var(--border);background:#17241c;border-radius:12px;padding:16px;min-width:0}
+.download-box h3{font-size:13px;margin-bottom:8px}
+.download-box p{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:13px;overflow-wrap:anywhere}
+.download-button{display:block;text-decoration:none;text-align:center;padding:13px 8px;border-radius:9px;background:var(--accent);color:#06150f;font-size:12px;font-weight:800}
+.download-button:hover{background:#20c994}
+.no-download{font-size:12px;color:var(--muted);padding:10px 0}
+
+
+.stats-panel{margin:16px 0 22px;padding:16px;border:1px solid var(--border);border-radius:13px;background:#0d1712}
+.stats-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.stats-head h3{font-size:14px;font-weight:800}
+.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.stat-card{min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#14211b}
+.stat-card span{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-bottom:6px}
+.stat-card strong{font-size:21px;font-weight:800;overflow-wrap:anywhere}
+.stats-updated{margin-top:10px;color:var(--muted);font-size:10px}
+.stats-refresh{border:1px solid var(--border);border-radius:8px;background:#1b2b23;color:var(--text);padding:8px 10px;font-size:11px;font-weight:700}
+.stats-error{color:#ffb4a9;font-size:11px;margin-top:8px}
+@media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+@media(max-width:600px){
+ header{padding:13px 14px}
+ .brand-mark{width:43px;height:43px}
+ .subtitle{font-size:11px}
+ .admin-btn{padding:10px;font-size:11px}
+ .header-icon{width:39px;height:39px}
+ .hero-logo{padding:12px 10px 18px}
+ main{padding:18px 12px 32px}
+ .catalog-intro{padding:23px 20px 20px}
+ .intro-copy{font-size:14px}
+ .filters{gap:7px}
+ .filter{padding:9px 11px}
+ .section-row{padding:20px 20px 14px}
+ .game-row{padding:15px 18px;gap:13px}
+ .row-cover{width:70px;height:70px;flex-basis:70px;border-radius:13px}
+ .row-main h3{font-size:15px}
+ .row-description{display:none}
+ .detail-cover{height:210px}
+ .detail-content{padding:19px}
+}
+@media(max-width:390px){
+ .brand{gap:8px}
+ .brand-mark{width:38px;height:38px;font-size:21px}
+ .logo{font-size:19px}
+ .subtitle{font-size:10px}
+ .header-actions{gap:5px}
+ .admin-btn{font-size:10px;padding:9px 8px}
+ .game-row{padding:13px 12px;gap:11px}
+ .row-cover{width:62px;height:62px;flex-basis:62px}
+ .row-main h3{font-size:14px}
+ .row-meta{font-size:11px}
+ .downloads{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">🎮</div>
+      <div>
+        <div class="logo"><span class="nether">Nether</span><span class="files">Files</span></div>
+        <p class="subtitle">o meu, o seu, os nossos arquivos</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-icon" type="button" aria-label="Painel administrativo" id="adminGear" hidden>⚙</button>
+      <button id="adminOpen" class="admin-btn" hidden>＋ Adicionar</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero-logo">
+  <img src="https://netherfiles.github.io/netherfiles/file_0000000031e4820eacf14cad738f0f7b.png" alt="NetherFiles" loading="eager">
+</section>
+
+<main>
+  <div id="catalogPage">
+    <section class="catalog-panel">
+      <div class="catalog-intro">
+        <h1 class="intro-title">Biblioteca de Jogos & Aplicativos</h1>
+        <p class="intro-copy">Encontre jogos, emuladores, ferramentas e muito mais em um só lugar.</p>
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input id="search" class="search" type="search" placeholder="Pesquisar jogo..." aria-label="Pesquisar biblioteca">
+        </div>
+        <div class="filters">
+          <button class="filter active" data-cat="Todos">Todas as categorias</button>
+          <button class="filter" data-cat="Jogos">Jogos</button>
+          <button class="filter" data-cat="Emuladores">Emuladores</button>
+          <button class="filter" data-cat="Ferramentas">Ferramentas</button>
+          <button class="filter" data-cat="Apps">Apps</button>
+          <button class="filter" data-cat="Mods">Mods</button>
+          <button class="filter" data-cat="Ports">Ports</button>
+          <button class="filter" data-cat="ROMs (PC)">ROMs (PC)</button>
+          <button class="filter" data-cat="ROMs (PS2)">ROMs (PS2)</button>
+          <button class="filter" data-cat="ROMs (Switch)">ROMs (Switch)</button>
+        </div>
+      </div>
+      <div class="section-row">
+        <h2 class="section-title">Aplicação / Nome</h2>
+        <span id="resultCount" class="results-label"></span>
+      </div>
+      <p id="status" class="notice" style="padding:0 26px 12px">Carregando biblioteca...</p>
+      <section id="grid" class="game-list"></section>
+    </section>
+  </div>
+
+  <div id="detailPage" hidden>
+    <button id="backToCatalog" class="back-button">← Voltar à biblioteca</button>
+    <section id="detailContent"></section>
+  </div>
+</main>
+
+<footer>
+  <p>NetherFiles © 2026</p>
+  <p style="margin-top:6px">Sua biblioteca de games, em um só lugar.</p>
+</footer>
+
+<div class="backdrop" id="backdrop">
+<section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-head">
+    <h2 id="modalTitle">Painel administrativo</h2>
+    <button id="closeModal" class="close" aria-label="Fechar">×</button>
+  </div>
+
+  <div id="loginArea">
+    <p class="notice">Entre com a conta administradora criada no Supabase.</p>
+    <form id="loginForm">
+      <label class="field"><span>E-mail</span><input id="email" type="email" autocomplete="username" required></label>
+      <label class="field"><span>Senha</span><input id="password" type="password" autocomplete="current-password" required></label>
+      <div class="form-buttons">
+        <button class="save" type="submit">Entrar</button>
+        <button class="cancel" type="button" id="cancelLogin">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="adminArea" hidden>
+    <p id="signedIn" class="notice">Administrador conectado.</p>
+
+    <section class="stats-panel" aria-label="Estatísticas do NetherFiles">
+      <div class="stats-head">
+        <h3>Estatísticas do NetherFiles</h3>
+        <button type="button" id="refreshStats" class="stats-refresh">Atualizar</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><span>Visitas totais</span><strong id="statVisits">—</strong></div>
+        <div class="stat-card"><span>Cliques em downloads</span><strong id="statDownloads">—</strong></div>
+        <div class="stat-card"><span>Jogos cadastrados</span><strong id="statGames">—</strong></div>
+        <div class="stat-card"><span>Emuladores cadastrados</span><strong id="statEmulators">—</strong></div>
+        <div class="stat-card"><span>Ports cadastrados</span><strong id="statPorts">—</strong></div>
+        <div class="stat-card"><span>Outros conteúdos</span><strong id="statOther">—</strong></div>
+        <div class="stat-card"><span>ROMs / ISOs cadastradas</span><strong id="statRoms">—</strong></div>
+      </div>
+      <p id="statsUpdated" class="stats-updated">As estatísticas são atualizadas ao abrir o painel.</p>
+      <p id="statsError" class="stats-error" role="status"></p>
+    </section>
+
+    <form id="gameForm">
+      <input id="itemId" type="hidden">
+      <input id="itemSource" type="hidden">
+
+      <label class="field"><span>Nome *</span><input id="name" required maxlength="120"></label>
+
+      <label class="field"><span>Categoria *</span>
+        <select id="category">
+          <option>Jogos</option>
+          <option>Emuladores</option>
+          <option>Ferramentas</option>
+          <option>Apps</option>
+          <option>Mods</option>
+          <option>Ports</option>
+          <option>ROMs (PC)</option>
+          <option>ROMs (PS2)</option>
+          <option>ROMs (Switch)</option>
+        </select>
+      </label>
+
+      <label class="field"><span>Plataforma</span><input id="platform" placeholder="Ex.: Android, PC, PS2"></label>
+      <label class="field"><span>URL da imagem</span><input id="image" type="url" placeholder="https://..."></label>
+
+      <div id="normalFields">
+        <label class="field"><span>Link principal (APK / Port / download)</span><input id="url" type="url" placeholder="https://..."></label>
+        <label class="field"><span>Link da ISO</span><input id="isoUrl" type="url" placeholder="https://..."></label>
+        <p class="notice">Jogos e Ports podem ter link principal e ISO. Apps, emuladores e ferramentas não exibem o botão de ISO.</p>
+      </div>
+
+      <div id="romFields" hidden>
+        <hr class="form-divider">
+        <h3 class="form-subtitle">Configuração da ROM</h3>
+
+        <div class="field">
+          <span>Emuladores compatíveis *</span>
+          <div id="emulatorOptions" class="emulator-options">
+            <label class="emulator-option" data-emulator-label="Winlator">
+              <input type="checkbox" name="emulatorOption" value="Winlator">
+              <span>Winlator</span>
+            </label>
+            <label class="emulator-option" data-emulator-label="GameHub">
+              <input type="checkbox" name="emulatorOption" value="GameHub">
+              <span>GameHub</span>
+            </label>
+            <label class="emulator-option" data-emulator-label="NetherSX2">
+              <input type="checkbox" name="emulatorOption" value="NetherSX2">
+              <span>NetherSX2</span>
+            </label>
+            <label class="emulator-option" data-emulator-label="Eden Nightly">
+              <input type="checkbox" name="emulatorOption" value="Eden Nightly">
+              <span>Eden Nightly</span>
+            </label>
+          </div>
+          <small id="emulatorHelp" class="emulator-help">Selecione os emuladores compatíveis.</small>
+        </div>
+
+        <label class="field"><span>Formato do arquivo</span>
+          <input id="fileType" maxlength="40" placeholder="Ex.: ISO, CHD, ZIP, EXE, BIN">
+        </label>
+
+        <label class="field"><span>Tipo de download *</span>
+          <select id="downloadMode">
+            <option value="single">Arquivo único</option>
+            <option value="parts">Vários arquivos (até 5 partes)</option>
+          </select>
+        </label>
+
+        <p id="fileModeInfo" class="file-mode-info">Um único botão de download será exibido na página do jogo.</p>
+
+        <div id="singleFileField" class="part-field">
+          <label class="field">
+            <span>Link do arquivo único *</span>
+            <input id="file1" type="url" placeholder="https://...">
+          </label>
+        </div>
+
+        <div id="partsFields" hidden>
+          <div class="part-field">
+            <label class="field"><span>Parte 1 *</span><input id="file2" type="url" placeholder="Link da parte 1"></label>
+          </div>
+          <div class="part-field">
+            <label class="field"><span>Parte 2</span><input id="file3" type="url" placeholder="Link da parte 2"></label>
+          </div>
+          <div class="part-field">
+            <label class="field"><span>Parte 3</span><input id="file4" type="url" placeholder="Link da parte 3"></label>
+          </div>
+          <div class="part-field">
+            <label class="field"><span>Parte 4</span><input id="file5" type="url" placeholder="Link da parte 4"></label>
+          </div>
+          <div class="part-field">
+            <label class="field"><span>Parte 5</span><input id="file6" type="url" placeholder="Link da parte 5"></label>
+          </div>
+        </div>
+      </div>
+
+      <label class="field"><span>Descrição</span><textarea id="description" maxlength="600"></textarea></label>
+
+      <div class="form-buttons">
+        <button id="saveItem" class="save" type="submit">Publicar item</button>
+        <button id="clearForm" class="cancel" type="button">Limpar</button>
+      </div>
+    </form>
+
+    <div class="admin-list">
+      <h3>Gerenciar catálogo</h3>
+      <p class="notice">Itens originais podem ser ocultados/restaurados. Itens do banco podem ser editados ou excluídos.</p>
+      <div id="adminList"></div>
+    </div>
+
+    <div class="form-buttons"><button id="logout" class="cancel" type="button">Sair da conta</button></div>
+  </div>
+
+  <p id="message" role="status"></p>
+</section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://ppkwqxgqhttvemxkklfe.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_sEz77Swi4SeNlEGsU1tb1A_0yxkO_gY";
+const ADMIN_USER_ID="9543e587-b210-4466-830d-ce187f7c39d3";
+const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+const starters=[
+["Fuzz TV","Apps","Android","Um app de streaming completo para assistir a conteúdos de entretenimento.","📺","fuzztv.png","https://www.mediafire.com/file/eq69shm2dzrwq9z/fuzztv.apk/file",""],
+["Max Payne","Jogos","PC · PlayStation 2 · Xbox","Um clássico de ação noir, com tiroteios em câmera lenta e uma história sombria.","🔫","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/header.jpg","https://store.steampowered.com/app/12140/Max_Payne/",""],
+["Resident Evil 4 (2005)","Jogos","PC · PlayStation 2 · GameCube · Wii","O clássico de sobrevivência e ação de Leon S. Kennedy, lançado originalmente em 2005.","🧟","re4.png","https://www.residentevil.com/",""],
+["Minecraft","Jogos","PC · Console · Mobile","Explore mundos, construa estruturas e sobreviva à sua própria aventura.","⛏️","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1672970/header.jpg","https://www.minecraft.net/",""],
+["Stardew Valley","Jogos","PC · Console · Mobile","Construa sua fazenda, conheça os moradores e descubra os segredos do vale.","🌱","https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg","https://www.stardewvalley.net/",""],
+["PPSSPP","Emuladores","Android · PC","Emulador de PSP para jogar seus jogos compatíveis em diferentes dispositivos.","🎮","","https://www.ppsspp.org/",""],
+["Dolphin Emulator","Emuladores","Android · PC","Emulador de Nintendo GameCube e Wii.","🐬","","https://dolphin-emu.org/",""],
+["RetroArch","Emuladores","Android · PC · Console","Uma plataforma que reúne vários núcleos de emulação em um só lugar.","🕹️","","https://www.retroarch.com/",""],
+["PCSX2","Emuladores","PC","Emulador de PlayStation 2 para computadores compatíveis.","🎮","","https://pcsx2.net/",""],
+["Winlator","Ferramentas","Android","Ferramenta para executar determinados aplicativos e jogos de Windows no Android.","📱","","https://github.com/brunodev85/winlator",""],
+["Godot Engine","Ferramentas","PC","Crie seus próprios jogos com este motor de desenvolvimento gratuito e de código aberto.","🛠️","","https://godotengine.org/",""],
+["Blender","Ferramentas","PC","Software de criação 3D para modelagem, animação e muito mais.","🎨","","https://www.blender.org/",""],
+["NetherFiles Ports","Ports","Várias plataformas","Área para reunir ports e projetos de jogos adaptados para outras plataformas.","📦","","",""],
+["NetherFiles Mods","Mods","Vários jogos","Área para reunir modificações, conteúdos extras e personalizações de jogos.","🧩","","",""]
+].map((x,i)=>({
+  id:"starter-"+i,name:x[0],category:x[1],platform:x[2],
+  description:x[3],emoji:x[4],image:x[5],url:x[6],
+  iso_url:x[7],source:"starter"
+}));
+
+let games=[];
+let activeCat="Todos";
+let isAdmin=false;
+let hiddenStarters=[];
+let hiddenLoadError=false;
+let currentDetailId=null;
+
+const $=id=>document.getElementById(id);
+
+function esc(s=""){
+  return String(s).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function http(s){
+  try{
+    const u=new URL(s);
+    return ["https:","http:"].includes(u.protocol)?u.href:"";
+  }catch{return "";}
+}
+
+function fromDb(g){
+  return {
+    ...g,
+    platform:g.platform||"Não informado",
+    description:g.description||"",
+    image:g.image||"",
+    url:g.url||"",
+    iso_url:g.iso_url||"",
+    emoji:"🎮",
+    source:"database",
+    isRom:false
+  };
+}
+
+function fromDbRom(r){
+  return {
+    ...r,
+    category:r.category,
+    platform:r.platform||"Não informado",
+    description:r.description||"",
+    image:r.image||"",
+    emulator:r.emulator||"",
+    emoji:"🎮",
+    source:"rom",
+    isRom:true
+  };
+}
+
+function visibleGames(){
+  return games.filter(g=>!hiddenStarters.includes(g.id));
+}
+
+function findItem(id){
+  return games.find(x=>String(x.id)===String(id));
+}
+
+/* Seleção múltipla de emuladores */
+function getSelectedEmulators(){
+  return [...document.querySelectorAll('input[name="emulatorOption"]:checked')]
+    .map(input=>input.value);
+}
+
+function setSelectedEmulators(values){
+  let selected;
+
+  if(Array.isArray(values)){
+    selected=values;
+  }else{
+    selected=String(values||"")
+      .split(",")
+      .map(x=>x.trim())
+      .filter(Boolean);
+  }
+
+  document.querySelectorAll('input[name="emulatorOption"]').forEach(input=>{
+    input.checked=selected.includes(input.value);
+  });
+}
+
+function toggleRomFields(){
+  const category=$("category").value;
+  const isRom=["ROMs (PC)","ROMs (PS2)","ROMs (Switch)"].includes(category);
+
+  $("romFields").hidden=!isRom;
+  $("normalFields").hidden=isRom;
+
+  const options=[...document.querySelectorAll('input[name="emulatorOption"]')];
+
+  options.forEach(input=>{
+    const allowed=
+      category==="ROMs (PS2)"
+        ?input.value==="NetherSX2"
+        :category==="ROMs (Switch)"
+          ?input.value==="Eden Nightly"
+          :category==="ROMs (PC)"
+            ?["Winlator","GameHub"].includes(input.value)
+            :true;
+
+    input.parentElement.hidden=!allowed;
+
+    if(!allowed)input.checked=false;
+  });
+
+  if(category==="ROMs (PS2)"){
+    setSelectedEmulators(["NetherSX2"]);
+  }else if(category==="ROMs (Switch)"){
+    setSelectedEmulators(["Eden Nightly"]);
+  }else if(category==="ROMs (PC)"){
+    const selected=getSelectedEmulators().filter(x=>["Winlator","GameHub"].includes(x));
+    setSelectedEmulators(selected);
+  }
+
+  $("emulatorHelp").textContent=
+    category==="ROMs (PC)"
+      ?"Marque Winlator, GameHub ou os dois."
+      :category==="ROMs (PS2)"
+        ?"Para PS2, o emulador é NetherSX2."
+        :category==="ROMs (Switch)"
+          ?"Para Switch, o emulador é Eden Nightly."
+          :"Você pode selecionar mais de um emulador.";
+}
+
+function toggleFileMode(){
+  const parts=$("downloadMode").value==="parts";
+  $("singleFileField").hidden=parts;
+  $("partsFields").hidden=!parts;
+  $("fileModeInfo").textContent=parts
+    ?"Preencha a Parte 1 e as outras partes que existirem. Os campos vazios não serão exibidos."
+    :"Um único botão de download será exibido na página do jogo.";
+}
+
+$("category").addEventListener("change",toggleRomFields);
+$("downloadMode").addEventListener("change",toggleFileMode);
+
+function openDetail(id){
+  const g=findItem(id);
+  if(!g)return;
+
+  currentDetailId=g.id;
+  $("catalogPage").hidden=true;
+  $("detailPage").hidden=false;
+
+  const im=http(g.image);
+  const cover=im
+    ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" onerror="this.style.display='none'">`
+    :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+
+  let downloadHtml="";
+
+  if(g.isRom){
+    const mode=g.download_mode||"single";
+    const files=mode==="parts"
+      ?[
+        {label:"Parte 1",url:g.file2},
+        {label:"Parte 2",url:g.file3},
+        {label:"Parte 3",url:g.file4},
+        {label:"Parte 4",url:g.file5},
+        {label:"Parte 5",url:g.file6}
+      ]
+      :[{label:"Arquivo único",url:g.file1}];
+
+    const available=files.filter(f=>http(f.url));
+
+    downloadHtml=available.length
+      ?available.map(f=>`
+        <div class="download-box">
+          <h3>📦 ${esc(f.label.toUpperCase())}</h3>
+          <p>${esc(g.file_type||"Arquivo para download")}</p>
+          <a class="download-button" data-download="${esc(g.id)}" href="${esc(http(f.url))}" target="_blank" rel="noopener noreferrer">BAIXAR ↗</a>
+        </div>`).join("")
+      :'<p class="no-download">Nenhum download disponível no momento.</p>';
+  }else{
+    const mainUrl=http(g.url);
+    const isoUrl=http(g.iso_url);
+    const supportsIso=["Jogos","Ports"].includes(g.category);
+
+    const mainBox=mainUrl?`
+      <div class="download-box">
+        <h3>📦 DOWNLOAD PRINCIPAL</h3>
+        <p>Aplicativo, port ou download principal.</p>
+        <a class="download-button" data-download="${esc(g.id)}" href="${esc(mainUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ↗</a>
+      </div>`:"";
+
+    const isoBox=supportsIso&&isoUrl?`
+      <div class="download-box">
+        <h3>💿 ISO</h3>
+        <p>Arquivo ISO do jogo.</p>
+        <a class="download-button" data-download="${esc(g.id)}" href="${esc(isoUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ISO ↗</a>
+      </div>`:"";
+
+    downloadHtml=mainBox+isoBox;
+    if(!downloadHtml)downloadHtml='<p class="no-download">Nenhum download disponível no momento.</p>';
+  }
+
+  const metaRom=g.isRom
+    ?`<p class="detail-meta">Emuladores compatíveis: ${esc(g.emulator||"Não informado")}<br>Formato: ${esc(g.file_type||"Não informado")}</p>`
+    :"";
+
+  $("detailContent").innerHTML=`
+    <article class="detail">
+      <div class="detail-cover">${cover}</div>
+      <div class="detail-content">
+        <span class="category">${esc(g.category)}</span>
+        <h1>${esc(g.name)}</h1>
+        <p class="detail-meta">Plataforma: ${esc(g.platform||"Não informado")}</p>
+        ${metaRom}
+        <p class="detail-description">${esc(g.description||"Nenhuma descrição informada.")}</p>
+        <div class="downloads" style="${downloadHtml.includes("download-box")?"":"grid-template-columns:1fr;"}">
+          ${downloadHtml}
+        </div>
+        ${isAdmin?'<div class="admin-actions"><button class="action edit" id="detailEdit">Editar item</button></div>':""}
+      </div>
+    </article>`;
+
+  if(isAdmin)$("detailEdit").onclick=()=>fillForm(g);
+  history.replaceState(null,"","#jogo-"+encodeURIComponent(g.id));
+  window.scrollTo(0,0);
+}
+
+function backToCatalog(){
+  $("detailPage").hidden=true;
+  $("catalogPage").hidden=false;
+  currentDetailId=null;
+  history.replaceState(null,"",location.pathname+location.search);
+}
+
+$("backToCatalog").onclick=backToCatalog;
+
+function render(){
+  const q=$("search").value.trim().toLowerCase();
+  const list=visibleGames().filter(g=>
+    [g.name,g.category,g.platform,g.description,g.emulator||"",g.file_type||""].join(" ").toLowerCase().includes(q)&&
+    (activeCat==="Todos"||g.category===activeCat)
+  );
+
+  $("resultCount").textContent=list.length+" itens";
+
+  if(!list.length){
+    $("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';
+    return;
+  }
+
+  $("grid").innerHTML=list.map(g=>{
+    const im=http(g.image);
+    const cover=im
+      ?`<img src="${esc(im)}" alt="Capa de ${esc(g.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">${g.emoji||"🎮"}</div>`
+      :`<div class="placeholder">${g.emoji||"🎮"}</div>`;
+
+    const actions=isAdmin
+      ?`<div class="admin-actions"><button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button></div>`:"";
+
+    const extra=g.isRom
+      ?`<span>${esc(g.emulator||"Emulador não informado")}</span>`
+      :"";
+
+    return `<article class="game-row">
+      <div class="row-cover">${cover}</div>
+      <div class="row-main">
+        <h3>${esc(g.name)}</h3>
+        <div class="row-meta">
+          <span class="category">${esc(g.category)}</span>
+          <span>${esc(g.platform||"Não informado")}</span>
+          ${extra}
+        </div>
+        <p class="row-description">${esc(g.description)}</p>
+        <button class="action" style="margin-top:9px" data-open="${esc(g.id)}">Ver detalhes e downloads ↗</button>
+        ${actions}
+      </div>
+      <span class="row-arrow" aria-hidden="true">›</span>
+    </article>`;
+  }).join("");
+}
+
+function renderAdminList(){
+  const rows=[
+    ...games.filter(g=>!hiddenStarters.includes(g.id)),
+    ...games.filter(g=>hiddenStarters.includes(g.id))
+  ];
+
+  if(!rows.length){
+    $("adminList").innerHTML='<p class="notice">Nenhum item encontrado.</p>';
+    return;
+  }
+
+  $("adminList").innerHTML=rows.map(g=>{
+    const hidden=hiddenStarters.includes(g.id);
+    const buttons=g.source==="starter"
+      ?(hidden
+        ?`<button class="action edit" data-restore="${esc(g.id)}">Restaurar</button>`
+        :`<button class="action delete" data-hide="${esc(g.id)}">Ocultar</button>`)
+      :`<button class="action edit" data-edit="${esc(g.id)}">Editar</button><button class="action delete" data-delete="${esc(g.id)}">Excluir</button>`;
+
+    return `<div class="admin-item">
+      <div class="item-name"><strong>${esc(g.name)}</strong>
+      <div class="item-meta">${esc(g.category)} · ${g.source==="starter"?"Original":g.source==="rom"?"ROM":"Supabase"}${hidden?" · Oculto":""}</div></div>
+      ${buttons}
+    </div>`;
+  }).join("");
+}
+
+let visitRegistered=false;
+
+async function registerAnalytics(eventType,itemId=null){
+  if(!db)return;
+  try{
+    const {error}=await db.from("site_analytics").insert({
+      event_type:eventType,
+      item_id:itemId===null?null:String(itemId)
+    });
+    if(error)console.error("Erro ao registrar estatística:",error);
+  }catch(error){console.error("Erro ao registrar estatística:",error);}
+}
+
+function registerVisit(){
+  if(visitRegistered)return;
+  visitRegistered=true;
+  registerAnalytics("visit");
+}
+
+async function loadStatistics(){
+  if(!db||!isAdmin)return;
+  $("statsError").textContent="";
+  $("statsUpdated").textContent="Atualizando estatísticas...";
+  const countRows=async(query)=>{
+    const {count,error}=await query;
+    if(error)throw error;
+    return count??0;
+  };
+  try{
+    const [visits,downloads,registeredGames,emulators,ports,other,roms]=await Promise.all([
+      countRows(db.from("site_analytics").select("id",{count:"exact",head:true}).eq("event_type","visit")),
+      countRows(db.from("site_analytics").select("id",{count:"exact",head:true}).eq("event_type","download")),
+      countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Jogos")),
+      countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Emuladores")),
+      countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Ports")),
+      countRows(db.from("games").select("id",{count:"exact",head:true}).in("category",["Ferramentas","Apps","Mods"])),
+      countRows(db.from("roms").select("id",{count:"exact",head:true}))
+    ]);
+    $("statVisits").textContent=visits.toLocaleString("pt-BR");
+    $("statDownloads").textContent=downloads.toLocaleString("pt-BR");
+    $("statGames").textContent=registeredGames.toLocaleString("pt-BR");
+    $("statEmulators").textContent=emulators.toLocaleString("pt-BR");
+    $("statPorts").textContent=ports.toLocaleString("pt-BR");
+    $("statOther").textContent=other.toLocaleString("pt-BR");
+    $("statRoms").textContent=roms.toLocaleString("pt-BR");
+    $("statsUpdated").textContent="Atualizado em "+new Date().toLocaleString("pt-BR");
+  }catch(error){
+    console.error("Erro ao carregar estatísticas:",error);
+    $("statsUpdated").textContent="Não foi possível atualizar as estatísticas.";
+    $("statsError").textContent="Confira as permissões de leitura do administrador na tabela site_analytics e o acesso às tabelas games e roms.";
+  }
+}
+
+$("refreshStats").addEventListener("click",loadStatistics);
+$("detailContent").addEventListener("click",event=>{
+  const link=event.target.closest("a[data-download]");
+  if(link)registerAnalytics("download",link.dataset.download);
+});
+
+function openModal(){
+  $("backdrop").classList.add("open");
+  $("message").textContent="";
+  syncUI();
+  if(isAdmin){renderAdminList();loadStatistics();}
+}
+
+function closeModal(){
+  $("backdrop").classList.remove("open");
+}
+
+function syncUI(){
+  $("loginArea").hidden=isAdmin;
+  $("adminArea").hidden=!isAdmin;
+  $("adminOpen").hidden=!isAdmin;
+  $("adminGear").hidden=!isAdmin;
+}
+
+function clearForm(){
+  $("gameForm").reset();
+  $("itemId").value="";
+  $("itemSource").value="";
+  $("modalTitle").textContent="Adicionar item";
+  $("saveItem").textContent="Publicar item";
+  $("category").value="Jogos";
+  $("downloadMode").value="single";
+  setSelectedEmulators([]);
+  toggleRomFields();
+  toggleFileMode();
+}
+
+function fillForm(g){
+  if(g.source==="starter"){
+    $("message").textContent="Itens originais não podem ser editados diretamente. Cadastre uma versão própria ou oculte este item.";
+    return;
+  }
+
+  clearForm();
+
+  $("itemId").value=g.id;
+  $("itemSource").value=g.source||"database";
+  $("name").value=g.name||"";
+  $("category").value=g.category||"Apps";
+  $("platform").value=g.platform||"";
+  $("image").value=g.image||"";
+  $("description").value=g.description||"";
+
+  if(g.isRom){
+    setSelectedEmulators(
+      g.emulator ||
+      (g.category==="ROMs (PS2)"
+        ?"NetherSX2"
+        :g.category==="ROMs (Switch)"
+          ?"Eden Nightly"
+          :"Winlator")
+    );
+    $("fileType").value=g.file_type||"";
+    $("downloadMode").value=g.download_mode||"single";
+    $("file1").value=g.file1||"";
+    $("file2").value=g.file2||"";
+    $("file3").value=g.file3||"";
+    $("file4").value=g.file4||"";
+    $("file5").value=g.file5||"";
+    $("file6").value=g.file6||"";
+  }else{
+    $("url").value=g.url||"";
+    $("isoUrl").value=g.iso_url||"";
+  }
+
+  toggleRomFields();
+
+  if(g.isRom){
+    setSelectedEmulators(
+      g.emulator ||
+      (g.category==="ROMs (PS2)"
+        ?"NetherSX2"
+        :g.category==="ROMs (Switch)"
+          ?"Eden Nightly"
+          :"Winlator")
+    );
+  }
+
+  toggleFileMode();
+
+  $("modalTitle").textContent=g.isRom?"Editar ROM":"Editar item";
+  $("saveItem").textContent="Salvar alterações";
+  openModal();
+}
+
+$("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
+$("adminGear").onclick=openModal;
+$("closeModal").onclick=closeModal;
+$("cancelLogin").onclick=closeModal;
+
+$("backdrop").addEventListener("click",e=>{
+  if(e.target===$("backdrop"))closeModal();
+});
+
+$("search").addEventListener("input",render);
+
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+  activeCat=b.dataset.cat;
+  document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+}));
+
+$("clearForm").onclick=clearForm;
+
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  $("message").textContent="Entrando...";
+
+  if(!db){
+    $("message").textContent="Supabase indisponível.";
+    return;
+  }
+
+  const {data,error}=await db.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+
+  if(error){
+    $("message").textContent="Falha no login. Confira e-mail e senha.";
+    console.error(error);
+    return;
+  }
+
+  if(data.user?.id!==ADMIN_USER_ID){
+    await db.auth.signOut();
+    isAdmin=false;
+    syncUI();
+    $("message").textContent="Esta conta não é a administradora autorizada.";
+    return;
+  }
+
+  isAdmin=true;
+  $("signedIn").textContent="Conectado como "+(data.user.email||"administrador")+".";
+  syncUI();
+  $("message").textContent="Login realizado.";
+  await loadGames();
+  await loadStatistics();
+});
+
+$("logout").onclick=async()=>{
+  if(db)await db.auth.signOut();
+  isAdmin=false;
+  clearForm();
+  syncUI();
+  $("message").textContent="Você saiu da conta.";
+  render();
+};
+
+$("gameForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  if(!db||!isAdmin){
+    $("message").textContent="Entre com a conta administradora primeiro.";
+    return;
+  }
+
+  const id=$("itemId").value;
+  const category=$("category").value;
+  const isRom=["ROMs (PC)","ROMs (PS2)","ROMs (Switch)"].includes(category);
+  const source=$("itemSource").value;
+
+  const common={
+    name:$("name").value.trim(),
+    category,
+    platform:$("platform").value.trim(),
+    image:$("image").value.trim(),
+    description:$("description").value.trim()
+  };
+
+  if(!common.name){
+    $("message").textContent="Digite o nome do item.";
+    return;
+  }
+
+  if(common.image&&!http(common.image)){
+    $("message").textContent="A imagem precisa ser uma URL http:// ou https:// válida.";
+    return;
+  }
+
+  let table;
+  let payload;
+
+  if(isRom){
+    table="roms";
+
+    const mode=$("downloadMode").value;
+    const selectedEmulators=getSelectedEmulators();
+
+    if(category==="ROMs (PS2)"){
+      if(selectedEmulators.length!==1||selectedEmulators[0]!=="NetherSX2"){
+        $("message").textContent="Para ROMs (PS2), selecione NetherSX2.";
+        return;
+      }
+    }
+
+    if(category==="ROMs (PC)"){
+      if(
+        selectedEmulators.length===0||
+        selectedEmulators.some(x=>!["Winlator","GameHub"].includes(x))
+      ){
+        $("message").textContent="Selecione Winlator, GameHub ou os dois.";
+        return;
+      }
+    }
+
+    if(category==="ROMs (Switch)"){
+      if(selectedEmulators.length!==1||selectedEmulators[0]!=="Eden Nightly"){
+        $("message").textContent="Para ROMs (Switch), selecione Eden Nightly.";
+        return;
+      }
+    }
+
+    const f1=$("file1").value.trim();
+    const f2=$("file2").value.trim();
+    const f3=$("file3").value.trim();
+    const f4=$("file4").value.trim();
+    const f5=$("file5").value.trim();
+    const f6=$("file6").value.trim();
+
+    if(mode==="single"){
+      if(!f1||!http(f1)){
+        $("message").textContent="Informe um link válido para o arquivo único.";
+        return;
+      }
+    }else{
+      if(!f2||!http(f2)){
+        $("message").textContent="Informe um link válido para a Parte 1.";
+        return;
+      }
+
+      const parts=[f2,f3,f4,f5,f6].filter(Boolean);
+
+      if(parts.some(url=>!http(url))){
+        $("message").textContent="Todos os links preenchidos precisam começar com http:// ou https://.";
+        return;
+      }
+
+      let foundEmpty=false;
+
+      for(const part of [f2,f3,f4,f5,f6]){
+        if(!part)foundEmpty=true;
+        else if(foundEmpty){
+          $("message").textContent="Preencha as partes em ordem, sem deixar espaços entre elas.";
+          return;
+        }
+      }
+    }
+
+    payload={
+      ...common,
+      emulator:selectedEmulators.join(", "),
+      file_type:$("fileType").value.trim(),
+      download_mode:mode,
+      file1:mode==="single"?f1:null,
+      file2:mode==="parts"?f2||null:null,
+      file3:mode==="parts"?f3||null:null,
+      file4:mode==="parts"?f4||null:null,
+      file5:mode==="parts"?f5||null:null,
+      file6:mode==="parts"?f6||null:null
+    };
+  }else{
+    table="games";
+
+    payload={
+      ...common,
+      url:$("url").value.trim(),
+      iso_url:$("isoUrl").value.trim()
+    };
+
+    if(!payload.url&&!payload.iso_url){
+      $("message").textContent="Preencha pelo menos um link de download.";
+      return;
+    }
+
+    if(payload.url&&!http(payload.url)){
+      $("message").textContent="O link principal precisa começar com http:// ou https://.";
+      return;
+    }
+
+    if(payload.iso_url&&!http(payload.iso_url)){
+      $("message").textContent="O link da ISO precisa começar com http:// ou https://.";
+      return;
+    }
+  }
+
+  $("message").textContent="Salvando...";
+
+  let result;
+
+  if(id){
+    result=await db.from(table).update(payload).eq("id",id).select().single();
+  }else{
+    result=await db.from(table).insert(payload).select().single();
+  }
+
+  if(result.error){
+    console.error(result.error);
+    $("message").textContent="Erro ao salvar. Confira se a tabela roms foi criada e se as políticas RLS estão configuradas.";
+    return;
+  }
+
+  $("message").textContent=isRom?"ROM salva com sucesso!":"Item salvo com sucesso!";
+  clearForm();
+  await loadGames();
+});
+
+async function deleteDatabaseItem(id,name,source){
+  if(!isAdmin||!db||!confirm(`Excluir "${name}" permanentemente do banco?`))return;
+
+  const table=source==="rom"?"roms":"games";
+  const {error}=await db.from(table).delete().eq("id",id);
+
+  if(error){
+    alert("Falha ao excluir. Confira as políticas RLS da tabela.");
+    console.error(error);
+    return;
+  }
+
+  await loadGames();
+  renderAdminList();
+  $("message").textContent="Item excluído para todos.";
+}
+
+async function hideStarter(id,name){
+  if(!db||!isAdmin)return;
+
+  if(hiddenLoadError){
+    $("message").textContent="Não foi possível confirmar as exclusões globais. Verifique hidden_starters.";
+    return;
+  }
+
+  if(hiddenStarters.includes(id)||!confirm(`Ocultar "${name}" para TODOS os visitantes?`))return;
+
+  const {error}=await db.from("hidden_starters").insert({starter_id:id});
+
+  if(error){
+    console.error(error);
+    $("message").textContent="Falha ao ocultar. Confira hidden_starters e as políticas RLS.";
+    return;
+  }
+
+  hiddenStarters.push(id);
+  render();
+  renderAdminList();
+  $("message").textContent="Item ocultado para todos!";
+}
+
+async function restoreStarter(id){
+  if(!db||!isAdmin)return;
+
+  if(hiddenLoadError){
+    $("message").textContent="Não foi possível confirmar as exclusões globais.";
+    return;
+  }
+
+  const item=starters.find(g=>g.id===id);
+
+  if(!confirm(`Restaurar "${item?.name||id}" para todos os visitantes?`))return;
+
+  const {error}=await db.from("hidden_starters").delete().eq("starter_id",id);
+
+  if(error){
+    console.error(error);
+    $("message").textContent="Falha ao restaurar.";
+    return;
+  }
+
+  hiddenStarters=hiddenStarters.filter(x=>x!==id);
+  render();
+  renderAdminList();
+  $("message").textContent="Item restaurado para todos!";
+}
+
+$("grid").addEventListener("click",async e=>{
+  const open=e.target.closest("[data-open]");
+
+  if(open){
+    openDetail(open.dataset.open);
+    return;
+  }
+
+  if(!isAdmin)return;
+
+  const edit=e.target.closest("[data-edit]");
+  const del=e.target.closest("[data-delete]");
+
+  if(edit){
+    const g=findItem(edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+
+  if(del){
+    const g=findItem(del.dataset.delete);
+
+    if(g){
+      if(g.source==="starter")await hideStarter(g.id,g.name);
+      else await deleteDatabaseItem(g.id,g.name,g.source);
+    }
+  }
+});
+
+$("adminList").addEventListener("click",async e=>{
+  if(!isAdmin)return;
+
+  const hide=e.target.closest("[data-hide]");
+  const restore=e.target.closest("[data-restore]");
+  const edit=e.target.closest("[data-edit]");
+  const del=e.target.closest("[data-delete]");
+
+  if(hide){
+    const g=findItem(hide.dataset.hide);
+    if(g)await hideStarter(g.id,g.name);
+  }
+
+  if(restore)await restoreStarter(restore.dataset.restore);
+
+  if(edit){
+    const g=findItem(edit.dataset.edit);
+    if(g)fillForm(g);
+  }
+
+  if(del){
+    const g=findItem(del.dataset.delete);
+    if(g&&g.source!=="starter"){
+      await deleteDatabaseItem(g.id,g.name,g.source);
+    }
+  }
+});
+
+async function loadHiddenStarters(){
+  const {data,error}=await db.from("hidden_starters").select("starter_id");
+
+  if(error){
+    console.error("Erro ao carregar exclusões globais:",error);
+    hiddenLoadError=true;
+    hiddenStarters=[];
+    return false;
+  }
+
+  hiddenStarters=(data||[]).map(row=>row.starter_id);
+  hiddenLoadError=false;
+  return true;
+}
+
+async function loadGames(){
+  $("status").textContent="Carregando biblioteca...";
+
+  if(!db){
+    games=starters;
+    hiddenStarters=[];
+    $("status").textContent="Não foi possível iniciar a conexão com o Supabase.";
+    render();
+    return;
+  }
+
+  const [gamesResult,romsResult,hiddenOk]=await Promise.all([
+    db.from("games").select("*").order("created_at",{ascending:false}),
+    db.from("roms").select("*").order("created_at",{ascending:false}),
+    loadHiddenStarters()
+  ]);
+
+  if(gamesResult.error)console.error("Erro ao carregar games:",gamesResult.error);
+  if(romsResult.error)console.error("Erro ao carregar ROMs:",romsResult.error);
+
+  const regularItems=gamesResult.error?[]:(gamesResult.data||[]).map(fromDb);
+  const romItems=romsResult.error?[]:(romsResult.data||[]).map(fromDbRom);
+
+  games=[...regularItems,...romItems,...starters];
+
+  if(gamesResult.error||romsResult.error){
+    $("status").textContent="Aviso: houve um erro ao carregar uma parte da biblioteca. Confira as tabelas games e roms.";
+  }else{
+    $("status").textContent=hiddenOk
+      ?"Biblioteca atualizada."
+      :"Aviso: confira a tabela hidden_starters.";
+  }
+
+  render();
+
+  if(isAdmin)renderAdminList();
+
+  if(currentDetailId!==null){
+    const current=findItem(currentDetailId);
+    if(current&&!hiddenStarters.includes(current.id))openDetail(current.id);
+    else backToCatalog();
+  }
+}
+
+window.addEventListener("hashchange",()=>{
+  const match=location.hash.match(/^#jogo-(.+)$/);
+
+  if(match){
+    let id;
+    try{id=decodeURIComponent(match[1]);}
+    catch{id=match[1];}
+    openDetail(id);
+  }else if(currentDetailId!==null){
+    backToCatalog();
+  }
+});
+
+if(db){
+  db.auth.getSession().then(async({data,error})=>{
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    const user=data.session?.user;
+
+    if(user?.id===ADMIN_USER_ID){
+      isAdmin=true;
+      $("signedIn").textContent="Conectado como "+(user.email||"administrador")+".";
+      syncUI();
+      await loadGames();
+      await loadStatistics();
+    }else{
+      isAdmin=false;
+      syncUI();
+      if(user)await db.auth.signOut();
+    }
+  });
+}
+
+syncUI();
+toggleRomFields();
+toggleFileMode();
+registerVisit();
+loadGames();
+</script>
+</body>
+  </html>
