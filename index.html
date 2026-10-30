@@ -212,7 +212,6 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
           <button class="filter" data-cat="Emuladores">Emuladores</button>
           <button class="filter" data-cat="Ferramentas">Ferramentas</button>
           <button class="filter" data-cat="Apps">Apps</button>
-          <button class="filter" data-cat="Mods">Mods</button>
           <button class="filter" data-cat="Ports">Ports</button>
           <button class="filter" data-cat="ROMs (PC)">ROMs (PC)</button>
           <button class="filter" data-cat="ROMs (PS2)">ROMs (PS2)</button>
@@ -291,7 +290,6 @@ footer{max-width:1120px;margin:auto;padding:22px 15px 30px;text-align:center;col
           <option>Emuladores</option>
           <option>Ferramentas</option>
           <option>Apps</option>
-          <option>Mods</option>
           <option>Ports</option>
           <option>ROMs (PC)</option>
           <option>ROMs (PS2)</option>
@@ -416,7 +414,6 @@ const starters=[
 ["Godot Engine","Ferramentas","PC","Crie seus próprios jogos com este motor de desenvolvimento gratuito e de código aberto.","🛠️","","https://godotengine.org/",""],
 ["Blender","Ferramentas","PC","Software de criação 3D para modelagem, animação e muito mais.","🎨","","https://www.blender.org/",""],
 ["NetherFiles Ports","Ports","Várias plataformas","Área para reunir ports e projetos de jogos adaptados para outras plataformas.","📦","","",""],
-["NetherFiles Mods","Mods","Vários jogos","Área para reunir modificações, conteúdos extras e personalizações de jogos.","🧩","","",""]
 ].map((x,i)=>({
   id:"starter-"+i,name:x[0],category:x[1],platform:x[2],
   description:x[3],emoji:x[4],image:x[5],url:x[6],
@@ -760,7 +757,7 @@ async function loadStatistics(){
       countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Jogos")),
       countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Emuladores")),
       countRows(db.from("games").select("id",{count:"exact",head:true}).eq("category","Ports")),
-      countRows(db.from("games").select("id",{count:"exact",head:true}).in("category",["Ferramentas","Apps","Mods"])),
+      countRows(db.from("games").select("id",{count:"exact",head:true}).in("category",["Ferramentas","Apps"])),
       countRows(db.from("roms").select("id",{count:"exact",head:true}))
     ]);
     $("statVisits").textContent=visits.toLocaleString("pt-BR");
