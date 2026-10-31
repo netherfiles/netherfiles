@@ -186,6 +186,12 @@ header{
 .download-box:hover{border-color:#982335;box-shadow:0 12px 28px rgba(0,0,0,.45),0 0 22px rgba(176,0,32,.08)}
 .stats-panel{border-color:#48171d;background:#090607}.stat-card{border-color:#48171d;background:linear-gradient(145deg,#180d0f,#0c0708)}.stat-card:hover{border-color:#922234}.stat-card strong{color:#ffdce2}.stats-refresh{background:#1a0d0f;border-color:#511923}
 
+
+/* Seletor de idioma */
+.language-select{appearance:none;background:#120b0c;color:#f8f4f4;border:1px solid #5b1b25;border-radius:9px;padding:10px 31px 10px 11px;font-size:12px;font-weight:700;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,#e00028 50%),linear-gradient(135deg,#e00028 50%,transparent 50%);background-position:calc(100% - 15px) 16px,calc(100% - 10px) 16px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.language-select:focus{border-color:#e00028;outline:3px solid rgba(224,0,40,.14)}
+@media(max-width:600px){.language-select{max-width:102px;padding:9px 27px 9px 9px;font-size:11px}}
+
 </style>
 </head>
 
@@ -196,12 +202,17 @@ header{
       <div class="brand-mark" aria-hidden="true">🎮</div>
       <div>
         <div class="logo"><span class="nether">Nether</span><span class="files">Files</span></div>
-        <p class="subtitle">o meu, o seu, os nossos arquivos</p>
+        <p class="subtitle" data-i18n="subtitle">o meu, o seu, os nossos arquivos</p>
       </div>
     </div>
     <div class="header-actions">
+      <select id="languageSelect" class="language-select" aria-label="Idioma">
+        <option value="pt-BR">🇧🇷 PT</option>
+        <option value="en">🇺🇸 EN</option>
+        <option value="es">🇪🇸 ES</option>
+      </select>
       <button class="header-icon" type="button" aria-label="Painel administrativo" id="adminGear" hidden>⚙</button>
-      <button id="adminOpen" class="admin-btn" hidden>＋ Adicionar</button>
+      <button id="adminOpen" class="admin-btn" hidden data-i18n="add">＋ Adicionar</button>
     </div>
   </div>
 </header>
@@ -214,17 +225,17 @@ header{
   <div id="catalogPage">
     <section class="catalog-panel">
       <div class="catalog-intro">
-        <h1 class="intro-title">Biblioteca de Jogos & Aplicativos</h1>
-        <p class="intro-copy">Encontre jogos, emuladores, ferramentas e muito mais em um só lugar.</p>
+        <h1 class="intro-title" data-i18n="libraryTitle">Biblioteca de Jogos & Aplicativos</h1>
+        <p class="intro-copy" data-i18n="libraryCopy">Encontre jogos, emuladores, ferramentas e muito mais em um só lugar.</p>
         <div class="search-wrap">
           <span class="search-icon">⌕</span>
-          <input id="search" class="search" type="search" placeholder="Pesquisar jogo..." aria-label="Pesquisar biblioteca">
+          <input id="search" class="search" type="search" placeholder="Pesquisar jogo..." aria-label="Pesquisar biblioteca" data-i18n-placeholder="searchPlaceholder">
         </div>
         <div class="filters">
-          <button class="filter active" data-cat="Todos">Todas as categorias</button>
-          <button class="filter" data-cat="Jogos">Jogos</button>
-          <button class="filter" data-cat="Emuladores">Emuladores</button>
-          <button class="filter" data-cat="Ferramentas">Ferramentas</button>
+          <button class="filter active" data-cat="Todos" data-i18n="allCategories">Todas as categorias</button>
+          <button class="filter" data-cat="Jogos" data-i18n="games">Jogos</button>
+          <button class="filter" data-cat="Emuladores" data-i18n="emulators">Emuladores</button>
+          <button class="filter" data-cat="Ferramentas" data-i18n="tools">Ferramentas</button>
           <button class="filter" data-cat="Apps">Apps</button>
           <button class="filter" data-cat="Ports">Ports</button>
           <button class="filter" data-cat="Jogos (PC)">Jogos (PC)</button>
@@ -233,7 +244,7 @@ header{
         </div>
       </div>
       <div class="section-row">
-        <h2 class="section-title">Aplicação / Nome</h2>
+        <h2 class="section-title" data-i18n="appName">Aplicação / Nome</h2>
         <span id="resultCount" class="results-label"></span>
       </div>
       <p id="status" class="notice" style="padding:0 26px 12px">Carregando biblioteca...</p>
@@ -242,14 +253,14 @@ header{
   </div>
 
   <div id="detailPage" hidden>
-    <button id="backToCatalog" class="back-button">← Voltar à biblioteca</button>
+    <button id="backToCatalog" class="back-button"><span data-i18n="backLibrary">← Voltar à biblioteca</span></button>
     <section id="detailContent"></section>
   </div>
 </main>
 
 <footer>
   <p>NetherFiles © 2026</p>
-  <p style="margin-top:6px">Sua biblioteca de games, em um só lugar.</p>
+  <p style="margin-top:6px" data-i18n="footerCopy">Sua biblioteca de games, em um só lugar.</p>
 </footer>
 
 <div class="backdrop" id="backdrop">
@@ -443,6 +454,31 @@ let currentDetailId=null;
 
 const $=id=>document.getElementById(id);
 
+/* Idiomas: PT-BR, English e Espanol. A escolha fica salva no navegador. */
+const translations={
+  "pt-BR":{
+    subtitle:"o meu, o seu, os nossos arquivos",libraryTitle:"Biblioteca de Jogos & Aplicativos",libraryCopy:"Encontre jogos, emuladores, ferramentas e muito mais em um só lugar.",searchPlaceholder:"Pesquisar jogo...",allCategories:"Todas as categorias",games:"Jogos",emulators:"Emuladores",tools:"Ferramentas",appName:"Aplicação / Nome",backLibrary:"← Voltar à biblioteca",footerCopy:"Sua biblioteca de games, em um só lugar.",add:"＋ Adicionar",items:"itens",empty:"Nenhum resultado encontrado.",details:"Ver detalhes e downloads ↗",available:"● DISPONÍVEL AGORA",platform:"Plataforma",compatible:"Emuladores compatíveis",format:"Formato",notInformed:"Não informado",noDescription:"Nenhuma descrição informada.",noDownload:"Nenhum download disponível no momento.",download:"BAIXAR ↗",downloadIso:"BAIXAR ISO ↗",mainDownload:"📦 DOWNLOAD PRINCIPAL",mainDownloadDesc:"Aplicativo, port ou download principal.",isoDesc:"Arquivo ISO do jogo.",fileDownload:"Arquivo para download",singleFile:"Arquivo único",part:"Parte"
+  },
+  en:{
+    subtitle:"my files, your files, our files",libraryTitle:"Games & Apps Library",libraryCopy:"Find games, emulators, tools and much more in one place.",searchPlaceholder:"Search games...",allCategories:"All categories",games:"Games",emulators:"Emulators",tools:"Tools",appName:"Application / Name",backLibrary:"← Back to library",footerCopy:"Your gaming library, all in one place.",add:"＋ Add",items:"items",empty:"No results found.",details:"View details and downloads ↗",available:"● AVAILABLE NOW",platform:"Platform",compatible:"Compatible emulators",format:"Format",notInformed:"Not provided",noDescription:"No description provided.",noDownload:"No downloads available right now.",download:"DOWNLOAD ↗",downloadIso:"DOWNLOAD ISO ↗",mainDownload:"📦 MAIN DOWNLOAD",mainDownloadDesc:"App, port or main download.",isoDesc:"Game ISO file.",fileDownload:"Download file",singleFile:"Single file",part:"Part"
+  },
+  es:{
+    subtitle:"mis archivos, tus archivos, nuestros archivos",libraryTitle:"Biblioteca de Juegos y Aplicaciones",libraryCopy:"Encuentra juegos, emuladores, herramientas y mucho más en un solo lugar.",searchPlaceholder:"Buscar juego...",allCategories:"Todas las categorías",games:"Juegos",emulators:"Emuladores",tools:"Herramientas",appName:"Aplicación / Nombre",backLibrary:"← Volver a la biblioteca",footerCopy:"Tu biblioteca de juegos, todo en un solo lugar.",add:"＋ Añadir",items:"elementos",empty:"No se encontraron resultados.",details:"Ver detalles y descargas ↗",available:"● DISPONIBLE AHORA",platform:"Plataforma",compatible:"Emuladores compatibles",format:"Formato",notInformed:"No informado",noDescription:"No se proporcionó descripción.",noDownload:"No hay descargas disponibles por el momento.",download:"DESCARGAR ↗",downloadIso:"DESCARGAR ISO ↗",mainDownload:"📦 DESCARGA PRINCIPAL",mainDownloadDesc:"Aplicación, port o descarga principal.",isoDesc:"Archivo ISO del juego.",fileDownload:"Archivo para descargar",singleFile:"Archivo único",part:"Parte"
+  }
+};
+let currentLanguage=localStorage.getItem("netherfiles-language")||"pt-BR";
+if(!translations[currentLanguage])currentLanguage="pt-BR";
+function t(key){return translations[currentLanguage]?.[key]||translations["pt-BR"][key]||key;}
+function applyLanguage(){
+  document.documentElement.lang=currentLanguage;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(t(key))el.textContent=t(key);});
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{el.placeholder=t(el.dataset.i18nPlaceholder);});
+  const selector=$("languageSelect");if(selector)selector.value=currentLanguage;
+  render();
+  if(currentDetailId!==null)openDetail(currentDetailId);
+}
+
+
 function esc(s=""){
   return String(s).replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -589,13 +625,13 @@ function openDetail(id){
     const mode=g.download_mode||"single";
     const files=mode==="parts"
       ?[
-        {label:"Parte 1",url:g.file2},
-        {label:"Parte 2",url:g.file3},
-        {label:"Parte 3",url:g.file4},
-        {label:"Parte 4",url:g.file5},
-        {label:"Parte 5",url:g.file6}
+        {label:t("part")+" 1",url:g.file2},
+        {label:t("part")+" 2",url:g.file3},
+        {label:t("part")+" 3",url:g.file4},
+        {label:t("part")+" 4",url:g.file5},
+        {label:t("part")+" 5",url:g.file6}
       ]
-      :[{label:"Arquivo único",url:g.file1}];
+      :[{label:t("singleFile"),url:g.file1}];
 
     const available=files.filter(f=>http(f.url));
 
@@ -603,10 +639,10 @@ function openDetail(id){
       ?available.map(f=>`
         <div class="download-box">
           <h3>📦 ${esc(f.label.toUpperCase())}</h3>
-          <p>${esc(g.file_type||"Arquivo para download")}</p>
-          <a class="download-button" data-download="${esc(g.id)}" href="${esc(http(f.url))}" target="_blank" rel="noopener noreferrer">BAIXAR ↗</a>
+          <p>${esc(g.file_type||t("fileDownload"))}</p>
+          <a class="download-button" data-download="${esc(g.id)}" href="${esc(http(f.url))}" target="_blank" rel="noopener noreferrer">${esc(t("download"))}</a>
         </div>`).join("")
-      :'<p class="no-download">Nenhum download disponível no momento.</p>';
+      :`<p class="no-download">${esc(t("noDownload"))}</p>`;
   }else{
     const mainUrl=http(g.url);
     const isoUrl=http(g.iso_url);
@@ -614,37 +650,37 @@ function openDetail(id){
 
     const mainBox=mainUrl?`
       <div class="download-box">
-        <h3>📦 DOWNLOAD PRINCIPAL</h3>
-        <p>Aplicativo, port ou download principal.</p>
-        <a class="download-button" data-download="${esc(g.id)}" href="${esc(mainUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ↗</a>
+        <h3>${esc(t("mainDownload"))}</h3>
+        <p>${esc(t("mainDownloadDesc"))}</p>
+        <a class="download-button" data-download="${esc(g.id)}" href="${esc(mainUrl)}" target="_blank" rel="noopener noreferrer">${esc(t("download"))}</a>
       </div>`:"";
 
     const isoBox=supportsIso&&isoUrl?`
       <div class="download-box">
         <h3>💿 ISO</h3>
-        <p>Arquivo ISO do jogo.</p>
-        <a class="download-button" data-download="${esc(g.id)}" href="${esc(isoUrl)}" target="_blank" rel="noopener noreferrer">BAIXAR ISO ↗</a>
+        <p>${esc(t("isoDesc"))}</p>
+        <a class="download-button" data-download="${esc(g.id)}" href="${esc(isoUrl)}" target="_blank" rel="noopener noreferrer">${esc(t("downloadIso"))}</a>
       </div>`:"";
 
     downloadHtml=mainBox+isoBox;
-    if(!downloadHtml)downloadHtml='<p class="no-download">Nenhum download disponível no momento.</p>';
+    if(!downloadHtml)downloadHtml=`<p class="no-download">${esc(t("noDownload"))}</p>`;
   }
 
   const metaRom=g.isRom
-    ?`<p class="detail-meta">Emuladores compatíveis: ${esc(g.emulator||"Não informado")}<br>Formato: ${esc(g.file_type||"Não informado")}</p>`
+    ?`<p class="detail-meta">${esc(t("compatible"))}: ${esc(g.emulator||t("notInformed"))}<br>${esc(t("format"))}: ${esc(g.file_type||t("notInformed"))}</p>`
     :"";
 
   $("detailContent").innerHTML=`
     <article class="detail">
       <div class="detail-cover">${cover}</div>
       <div class="detail-content">
-        <div class="available-badge">● DISPONÍVEL AGORA</div>
+        <div class="available-badge">${esc(t("available"))}</div>
         <br>
         <span class="category">${esc(g.category)}</span>
         <h1>${esc(g.name)}</h1>
-        <p class="detail-meta">Plataforma: ${esc(g.platform||"Não informado")}</p>
+        <p class="detail-meta">${esc(t("platform"))}: ${esc(g.platform||t("notInformed"))}</p>
         ${metaRom}
-        <p class="detail-description">${esc(g.description||"Nenhuma descrição informada.")}</p>
+        <p class="detail-description">${esc(g.description||t("noDescription"))}</p>
         <div class="downloads" style="${downloadHtml.includes("download-box")?"":"grid-template-columns:1fr;"}">
           ${downloadHtml}
         </div>
@@ -673,10 +709,10 @@ function render(){
     (activeCat==="Todos"||g.category===activeCat)
   );
 
-  $("resultCount").textContent=list.length+" itens";
+  $("resultCount").textContent=list.length+" "+t("items");
 
   if(!list.length){
-    $("grid").innerHTML='<p class="empty">Nenhum resultado encontrado.</p>';
+    $("grid").innerHTML='<p class="empty">'+esc(t("empty"))+'</p>';
     return;
   }
 
@@ -703,7 +739,7 @@ function render(){
           ${extra}
         </div>
         <p class="row-description">${esc(g.description)}</p>
-        <button class="action" style="margin-top:9px" data-open="${esc(g.id)}">Ver detalhes e downloads ↗</button>
+        <button class="action" style="margin-top:9px" data-open="${esc(g.id)}">${esc(t("details"))}</button>
         ${actions}
       </div>
       <span class="row-arrow" aria-hidden="true">›</span>
@@ -896,6 +932,7 @@ $("backdrop").addEventListener("click",e=>{
 });
 
 $("search").addEventListener("input",render);
+$("languageSelect").addEventListener("change",e=>{currentLanguage=e.target.value;localStorage.setItem("netherfiles-language",currentLanguage);applyLanguage();});
 
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
   activeCat=b.dataset.cat;
@@ -1330,7 +1367,8 @@ syncUI();
 toggleRomFields();
 toggleFileMode();
 registerVisit();
-loadGames();
+$("languageSelect").value=currentLanguage;
+loadGames().then(()=>applyLanguage());
 </script>
 </body>
 </html>
