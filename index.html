@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0f141b">
+<meta name="theme-color" content="#050505">
 <title>NetherFiles — Sua biblioteca de games</title>
 <meta name="description" content="Biblioteca NetherFiles com jogos, aplicativos, emuladores, ferramentas e ports em um só lugar.">
 <meta property="og:title" content="NetherFiles — Sua biblioteca de games">
@@ -114,6 +114,77 @@ footer{max-width:1160px;margin:auto;padding:24px 15px 34px;text-align:center;col
  .brand{gap:8px}.brand-mark{width:38px;height:38px;font-size:21px}.logo{font-size:19px}.subtitle{font-size:10px}.header-actions{gap:5px}.admin-btn{font-size:10px;padding:9px 8px}.game-row{align-items:flex-start;padding:12px 10px;gap:10px}.row-cover{width:78px;height:52px;flex-basis:78px}.row-main h3{font-size:14px}.row-meta{font-size:10px}.downloads{grid-template-columns:1fr}.action{padding:7px 8px}.catalog-panel{border-radius:17px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+
+
+/* ===== NetherFiles: tema preto + vermelho sangue ===== */
+:root{
+  --bg:#050505;
+  --bg-soft:#0b0708;
+  --panel:#100b0c;
+  --panel2:#170d0f;
+  --hover:#251014;
+  --border:#48171d;
+  --text:#f8f4f4;
+  --muted:#ae9699;
+  --accent:#b00020;
+  --accent2:#e00028;
+  --success:#b00020;
+  --danger:#ff354b;
+  --shadow:0 18px 55px rgba(0,0,0,.65);
+}
+body{
+  background:
+    radial-gradient(circle at 15% 0,rgba(176,0,32,.17),transparent 31rem),
+    radial-gradient(circle at 92% 32%,rgba(115,0,18,.10),transparent 36rem),
+    linear-gradient(180deg,#090607 0%,#050505 46%,#020202 100%);
+}
+::selection{background:rgba(224,0,40,.32);color:#fff}
+::-webkit-scrollbar-track{background:#050505}
+::-webkit-scrollbar-thumb{background:#61131e;border-color:#050505}
+::-webkit-scrollbar-thumb:hover{background:#c40024}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline-color:rgba(224,0,40,.4)}
+header{
+  background:rgba(8,5,6,.92);
+  border-bottom-color:#48171d;
+  box-shadow:0 10px 30px rgba(0,0,0,.58),0 1px 0 rgba(176,0,32,.17);
+}
+.brand-mark{background:linear-gradient(145deg,#2a1115,#100708);border-color:#561823;box-shadow:inset 0 1px rgba(255,255,255,.05),0 8px 25px rgba(0,0,0,.45)}
+.logo .files{color:#e00028;text-shadow:0 0 18px rgba(224,0,40,.34)}
+.admin-btn{background:linear-gradient(135deg,#850016,#e00028);color:#fff;box-shadow:0 8px 24px rgba(176,0,32,.28)}
+.admin-btn:hover,.header-icon:hover,.action:hover{border-color:#9d2636}
+.hero-logo{background:radial-gradient(circle at center,rgba(176,0,32,.18),transparent 58%)}
+.catalog-panel,.detail{border-color:rgba(174,39,55,.31);background:linear-gradient(145deg,rgba(19,10,12,.98),rgba(7,6,6,.99));box-shadow:0 18px 55px rgba(0,0,0,.65),0 0 32px rgba(120,0,18,.07)}
+.catalog-intro{border-bottom-color:rgba(176,0,32,.2);background:linear-gradient(135deg,rgba(105,0,16,.19),transparent 58%)}
+.search-icon{color:#c4a2a7}
+.search{background:#0c0809;border-color:#44151b;color:#fff}
+.search::placeholder{color:#765f63}.search:hover{background:#120a0c}
+.search:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:#e00028;box-shadow:0 0 0 3px rgba(224,0,40,.14)}
+.filter{background:#120b0c;border-color:#42151b;color:#e4d9da}
+.filter.active,.filter:hover{background:linear-gradient(135deg,#850016,#d00024);color:#fff;border-color:#e00028}
+.results-label{background:#0c0809;border-color:#40131a;color:#bba4a7}
+.game-row{border-color:rgba(111,30,40,.42);background:linear-gradient(90deg,#120b0c,#090707)}
+.game-row:hover{background:linear-gradient(90deg,#251014,#10090b);border-color:#8f1b2c;box-shadow:0 14px 35px rgba(0,0,0,.56),0 0 25px rgba(176,0,32,.10)}
+.row-cover{background:#140a0c;border-color:#561b24;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+.placeholder{background:linear-gradient(135deg,#351017,#100708)}
+.category{color:#ffd8de;background:rgba(176,0,32,.18);border-color:rgba(224,0,40,.31)}
+.row-arrow{color:#d77886}
+.action{background:#1b0d10;border-color:#551923}
+.edit{background:#39141a;color:#ffecef;border-color:#7b2632}.delete{background:#4a0f18;border-color:#8d2433}
+.backdrop{background:rgba(0,0,0,.82)}
+.modal{background:linear-gradient(160deg,#170d0f,#080607);border-color:#681e29;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 40px rgba(110,0,17,.08)}
+.field input,.field select,.field textarea{background:#0d0809;border-color:#46161d}
+.save,.download-button{background:linear-gradient(135deg,#850016,#e00028);color:#fff;box-shadow:0 8px 25px rgba(176,0,32,.27)}
+.save:hover,.download-button:hover{filter:brightness(1.14);box-shadow:0 10px 30px rgba(224,0,40,.33)}
+.cancel{background:#271316;color:#f7eeee}
+#message{color:#ffc4cd}
+.emulator-options{background:#0d0809;border-color:#46161d}.emulator-option input{accent-color:#d00024}
+.detail-cover{background:#11090b}.detail-cover:after{background:linear-gradient(transparent,rgba(5,2,3,.8))}
+.available-badge{background:linear-gradient(90deg,#700012,#b00020);box-shadow:0 8px 20px rgba(176,0,32,.24)}
+.back-button{background:#150b0d;border-color:#48171d}.back-button:hover{border-color:#e00028}
+.download-box{border-color:#4b171f;background:linear-gradient(145deg,#170c0e,#090607)}
+.download-box:hover{border-color:#982335;box-shadow:0 12px 28px rgba(0,0,0,.45),0 0 22px rgba(176,0,32,.08)}
+.stats-panel{border-color:#48171d;background:#090607}.stat-card{border-color:#48171d;background:linear-gradient(145deg,#180d0f,#0c0708)}.stat-card:hover{border-color:#922234}.stat-card strong{color:#ffdce2}.stats-refresh{background:#1a0d0f;border-color:#511923}
 
 </style>
 </head>
