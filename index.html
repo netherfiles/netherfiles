@@ -200,6 +200,41 @@ header{
 @media(max-width:600px){.home-discovery{padding:0 11px;margin-bottom:17px}.featured-block,.featured-copy{min-height:270px}.featured-copy{padding:22px}.featured-overlay{background:linear-gradient(0deg,rgba(3,2,2,.96) 0%,rgba(4,2,2,.62) 60%,rgba(4,2,2,.12) 100%)}.recent-track{grid-auto-columns:72vw}.discovery-section{margin-top:22px}}
 
 </style>
+
+<style>
+/* Cards maiores - ajuste visual solicitado */
+@media (min-width:601px){
+  .recent-track{grid-auto-columns:minmax(300px,340px);gap:18px}
+  .recent-card{padding:13px;border-radius:18px}
+  .recent-cover{aspect-ratio:16/10;border-radius:13px}
+  .recent-info{padding:15px 6px 7px}
+  .recent-info h3{font-size:18px;margin-bottom:8px}
+  .recent-meta{font-size:12px}
+  .recent-new{font-size:10px;padding:5px 8px;margin-top:11px}
+  .game-row{padding:21px 20px;gap:21px}
+  .row-cover{width:170px;height:96px;flex:0 0 170px;border-radius:11px}
+  .row-main h3{font-size:18px}
+  .row-meta{font-size:13px}
+  .row-description{font-size:13px}
+}
+@media (max-width:600px){
+  .recent-track{grid-auto-columns:82vw;gap:15px}
+  .recent-card{padding:12px;border-radius:17px}
+  .recent-cover{aspect-ratio:16/10;border-radius:13px}
+  .recent-info{padding:14px 5px 7px}
+  .recent-info h3{font-size:18px;margin-bottom:8px}
+  .recent-meta{font-size:12px}
+  .recent-new{font-size:10px;padding:5px 8px;margin-top:10px}
+  .game-row{padding:17px 13px;gap:14px}
+  .row-cover{width:112px;height:74px;flex-basis:112px}
+  .row-main h3{font-size:16px}
+}
+@media (max-width:390px){
+  .recent-track{grid-auto-columns:86vw}
+  .row-cover{width:96px;height:64px;flex-basis:96px}
+}
+</style>
+
 </head>
 
 <body>
@@ -465,6 +500,7 @@ let isAdmin=false;
 let hiddenStarters=[];
 let hiddenLoadError=false;
 let currentDetailId=null;
+let editingOriginal=null;
 
 const $=id=>document.getElementById(id);
 
@@ -884,6 +920,7 @@ function syncUI(){
 }
 
 function clearForm(){
+  editingOriginal=null;
   $("gameForm").reset();
   $("itemId").value="";
   $("itemSource").value="";
@@ -896,64 +933,68 @@ function clearForm(){
   toggleFileMode();
 }
 
-function fillForm(g){
+async function fillForm(g){
   if(g.source==="starter"){
     $("message").textContent="Itens originais não podem ser editados diretamente. Cadastre uma versão própria ou oculte este item.";
     return;
   }
 
+  /* Busca o registro atualizado na tabela correta antes de preencher o formulário. */
+  let item=g;
+  if(db&&g.id){
+    const table=g.source==="rom"?"roms":"games";
+    const {data,error}=await db.from(table).select("*").eq("id",g.id).single();
+    if(error){
+      console.error("Erro ao abrir item para edição:",error);
+      $("message").textContent="Não foi possível carregar todos os dados do item. Tente novamente.";
+      return;
+    }
+    item=g.source==="rom"?fromDbRom(data):fromDb(data);
+  }
+
   clearForm();
+  editingOriginal={...item};
 
-  $("itemId").value=g.id;
-  $("itemSource").value=g.source||"database";
-  $("name").value=g.name||"";
-  $("category").value=g.category||"Apps";
-  $("platform").value=g.platform||"";
-  $("image").value=g.image||"";
-  $("description").value=g.description||"";
+  $("itemId").value=item.id;
+  $("itemSource").value=item.source||"database";
+  $("name").value=item.name||"";
+  $("category").value=item.category||"Apps";
+  $("platform").value=item.platform||"";
+  $("image").value=item.image||"";
+  $("description").value=item.description||"";
 
-  if(g.isRom){
-    setSelectedEmulators(
-      g.emulator ||
-      (g.category==="Jogos (PS2)"
-        ?"NetherSX2"
-        :g.category==="Jogos (Switch)"
-          ?"Eden Nightly"
-          :"Winlator")
-    );
-    $("fileType").value=g.file_type||"";
-    $("downloadMode").value=g.download_mode||"single";
-    $("file1").value=g.file1||"";
-    $("file2").value=g.file2||"";
-    $("file3").value=g.file3||"";
-    $("file4").value=g.file4||"";
-    $("file5").value=g.file5||"";
-    $("file6").value=g.file6||"";
+  if(item.isRom){
+    $("fileType").value=item.file_type||"";
+    $("downloadMode").value=item.download_mode||"single";
+    $("file1").value=item.file1||"";
+    $("file2").value=item.file2||"";
+    $("file3").value=item.file3||"";
+    $("file4").value=item.file4||"";
+    $("file5").value=item.file5||"";
+    $("file6").value=item.file6||"";
   }else{
-    $("url").value=g.url||"";
-    $("isoUrl").value=g.iso_url||"";
+    $("url").value=item.url||"";
+    $("isoUrl").value=item.iso_url||"";
   }
 
   toggleRomFields();
 
-  if(g.isRom){
+  if(item.isRom){
     setSelectedEmulators(
-      g.emulator ||
-      (g.category==="Jogos (PS2)"
+      item.emulator||
+      (item.category==="Jogos (PS2)"
         ?"NetherSX2"
-        :g.category==="Jogos (Switch)"
+        :item.category==="Jogos (Switch)"
           ?"Eden Nightly"
           :"Winlator")
     );
   }
 
   toggleFileMode();
-
-  $("modalTitle").textContent=g.isRom?"Editar Jogo":"Editar item";
+  $("modalTitle").textContent=item.isRom?"Editar Jogo":"Editar item";
   $("saveItem").textContent="Salvar alterações";
   openModal();
 }
-
 $("adminOpen").onclick=()=>{openModal();if(isAdmin)clearForm();};
 $("adminGear").onclick=openModal;
 $("closeModal").onclick=closeModal;
@@ -1028,8 +1069,10 @@ $("gameForm").addEventListener("submit",async e=>{
 
   const id=$("itemId").value;
   const category=$("category").value;
-  const isRom=["Jogos (PC)","Jogos (PS2)","Jogos (Switch)"].includes(category);
+  const categoryIsRom=["Jogos (PC)","Jogos (PS2)","Jogos (Switch)"].includes(category);
   const source=$("itemSource").value;
+  /* Na edição, a origem define a tabela e o tipo do formulário. */
+  const isRom=id?source==="rom":categoryIsRom;
 
   const common={
     name:$("name").value.trim(),
@@ -1049,11 +1092,10 @@ $("gameForm").addEventListener("submit",async e=>{
     return;
   }
 
-  let table;
+  let table=id?(source==="rom"?"roms":"games"):(isRom?"roms":"games");
   let payload;
 
   if(isRom){
-    table="roms";
 
     const mode=$("downloadMode").value;
     const selectedEmulators=getSelectedEmulators();
@@ -1082,12 +1124,13 @@ $("gameForm").addEventListener("submit",async e=>{
       }
     }
 
-    const f1=$("file1").value.trim();
-    const f2=$("file2").value.trim();
-    const f3=$("file3").value.trim();
-    const f4=$("file4").value.trim();
-    const f5=$("file5").value.trim();
-    const f6=$("file6").value.trim();
+    const keep=(value,key)=>value||((id&&editingOriginal)?String(editingOriginal[key]||""):"");
+    const f1=keep($("file1").value.trim(),"file1");
+    const f2=keep($("file2").value.trim(),"file2");
+    const f3=keep($("file3").value.trim(),"file3");
+    const f4=keep($("file4").value.trim(),"file4");
+    const f5=keep($("file5").value.trim(),"file5");
+    const f6=keep($("file6").value.trim(),"file6");
 
     if(mode==="single"){
       if(!f1||!http(f1)){
@@ -1131,12 +1174,12 @@ $("gameForm").addEventListener("submit",async e=>{
       file6:mode==="parts"?f6||null:null
     };
   }else{
-    table="games";
-
+    const typedUrl=$("url").value.trim();
+    const typedIso=$("isoUrl").value.trim();
     payload={
       ...common,
-      url:$("url").value.trim(),
-      iso_url:$("isoUrl").value.trim()
+      url:typedUrl||((id&&editingOriginal)?editingOriginal.url||"":""),
+      iso_url:typedIso||((id&&editingOriginal)?editingOriginal.iso_url||"":"")
     };
 
     if(!payload.url&&!payload.iso_url){
@@ -1167,7 +1210,7 @@ $("gameForm").addEventListener("submit",async e=>{
 
   if(result.error){
     console.error(result.error);
-    $("message").textContent="Erro ao salvar. Confira se a tabela roms foi criada e se as políticas RLS estão configuradas.";
+    $("message").textContent="Erro ao salvar sem alterar os dados. Confira a tabela correta e as políticas RLS.";
     return;
   }
 
@@ -1403,37 +1446,3 @@ loadGames();
 </script>
 </body>
 </html>
-
-<style>
-/* Cards maiores - ajuste visual solicitado */
-@media (min-width:601px){
-  .recent-track{grid-auto-columns:minmax(300px,340px);gap:18px}
-  .recent-card{padding:13px;border-radius:18px}
-  .recent-cover{aspect-ratio:16/10;border-radius:13px}
-  .recent-info{padding:15px 6px 7px}
-  .recent-info h3{font-size:18px;margin-bottom:8px}
-  .recent-meta{font-size:12px}
-  .recent-new{font-size:10px;padding:5px 8px;margin-top:11px}
-  .game-row{padding:21px 20px;gap:21px}
-  .row-cover{width:170px;height:96px;flex:0 0 170px;border-radius:11px}
-  .row-main h3{font-size:18px}
-  .row-meta{font-size:13px}
-  .row-description{font-size:13px}
-}
-@media (max-width:600px){
-  .recent-track{grid-auto-columns:82vw;gap:15px}
-  .recent-card{padding:12px;border-radius:17px}
-  .recent-cover{aspect-ratio:16/10;border-radius:13px}
-  .recent-info{padding:14px 5px 7px}
-  .recent-info h3{font-size:18px;margin-bottom:8px}
-  .recent-meta{font-size:12px}
-  .recent-new{font-size:10px;padding:5px 8px;margin-top:10px}
-  .game-row{padding:17px 13px;gap:14px}
-  .row-cover{width:112px;height:74px;flex-basis:112px}
-  .row-main h3{font-size:16px}
-}
-@media (max-width:390px){
-  .recent-track{grid-auto-columns:86vw}
-  .row-cover{width:96px;height:64px;flex-basis:96px}
-}
-</style>
