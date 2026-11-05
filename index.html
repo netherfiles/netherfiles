@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#050505">
+<link rel="manifest" href="/netherfiles/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/netherfiles/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/netherfiles/icons/icon-192.png">
 <title>NetherFiles — Sua biblioteca de games</title>
 <meta name="description" content="Biblioteca NetherFiles com jogos, aplicativos, emuladores, ferramentas e ports em um só lugar.">
 <meta property="og:title" content="NetherFiles — Sua biblioteca de games">
@@ -1443,6 +1446,20 @@ toggleRomFields();
 toggleFileMode();
 registerVisit();
 loadGames();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "/netherfiles/sw.js",
+        { scope: "/netherfiles/" }
+      );
+      console.log("NetherFiles Service Worker registrado:", registration.scope);
+    } catch (error) {
+      console.error("Erro ao registrar Service Worker do NetherFiles:", error);
+    }
+  });
+}
 </script>
 </body>
 </html>
