@@ -238,6 +238,38 @@ header{
 }
 </style>
 
+
+<style>
+/* ===== AJUSTE 16:9 DAS CAPAS DOS CARDS ===== */
+.recent-cover{
+  aspect-ratio:16/9;
+}
+.recent-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+.row-cover{
+  aspect-ratio:16/9;
+  height:auto;
+}
+.row-cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+@media (min-width:601px){
+  .row-cover{width:170px;height:96px;flex:0 0 170px;}
+}
+@media (max-width:600px){
+  .row-cover{width:112px;height:63px;flex:0 0 112px;}
+}
+@media (max-width:390px){
+  .row-cover{width:96px;height:54px;flex:0 0 96px;}
+}
+</style>
 </head>
 
 <body>
